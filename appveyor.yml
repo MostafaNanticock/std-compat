@@ -26,11 +26,11 @@ build_script:
 
       rem --- ARM (skip if not supported) ---
       cmake -S . -B build_arm -G "%GENERATOR%" -A ARM || echo "ARM not supported on this image"
-      cmake --build build_arm --config Release || echo "ARM build skipped"
+      cmake -S . -B build_arm -G "%GENERATOR%" -A ARM && cmake --build build_arm --config Release || echo "ARM build skipped"
 
       rem --- ARM64 (skip if not supported) ---
       cmake -S . -B build_arm64 -G "%GENERATOR%" -A ARM64 || echo "ARM64 not supported on this image"
-      cmake --build build_arm64 --config Release || echo "ARM64 build skipped"
+      cmake -S . -B build_arm64 -G "%GENERATOR%" -A ARM64 && cmake --build build_arm64 --config Release || echo "ARM64 build skipped"
 
 test_script:
   - cmd: |
