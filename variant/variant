@@ -4,11 +4,13 @@
 #include "monostate_compat.h"
 
 #ifndef variant_CONFIG_SELECT_VARIANT
-#    define variant_CONFIG_SELECT_VARIANT 1
+#define variant_CONFIG_SELECT_VARIANT 1
 #endif
 
 #define variant_CONFIG_OVERRIDE_MONOSTATE PM::internal::monostate
+#if defined(_MSC_VER) && _MSC_VER >= 1930
 #define variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS std::bad_variant_access
+#endif
 
 #include "variant.hpp"
 
