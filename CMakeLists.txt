@@ -66,13 +66,4 @@ target_compile_definitions(StdCompatibilityLayer
 # )
 
 enable_testing()
-
 add_subdirectory(tests)
-
-add_executable(tst_StdCompatibilityLayer
-    tests/tst_StdCompatibilityLayer.cpp
-)
-target_link_libraries(tst_StdCompatibilityLayer
-PRIVATE
-    StdCompatibilityLayer
-)

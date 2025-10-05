@@ -1,34 +1,6 @@
-// shim files
+#include <../common/testing.h>
+
 #include <variant>
-
-#include <iostream>
-#include <string>
-#include <utility>
-
-#ifndef PM_UNUSED
-#    define PM_UNUSED(x) static_cast<void>(x)
-#endif
-
-// clang-format off
-#define PM_EXECUTE_TEST(TestFunctionName)                                                       \
-    std::cout << "=== Testing " << #TestFunctionName << " ===" << std::endl;                    \
-    if (!TestFunctionName())                                                                    \
-    {                                                                                           \
-        std::cerr << "Test function :" << #TestFunctionName << "() failed" << std::endl;        \
-        return 0;                                                                               \
-    }                                                                                           \
-    else                                                                                        \
-    {                                                                                           \
-        std::cout << "=== " << #TestFunctionName << ": All tests passed ===\n" << std::endl;    \
-    }
-// clang-format on
-
-bool test_variant();
-
-int main()
-{
-    PM_EXECUTE_TEST(test_variant);
-}
 
 bool test_variant()
 {
@@ -158,4 +130,9 @@ bool test_variant()
         return false;
 
     return true;
+}
+
+int main()
+{
+    PM_EXECUTE_TEST(test_variant);
 }
