@@ -134,5 +134,7 @@ bool test_variant()
 
 int main()
 {
+    PM_PRINT_COMPILE_INFO;
+
     PM_EXECUTE_TEST(test_variant);
 }

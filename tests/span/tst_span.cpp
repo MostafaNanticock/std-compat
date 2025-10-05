@@ -192,5 +192,7 @@ bool test_span()
 
 int main()
 {
+    PM_PRINT_COMPILE_INFO;
+
     PM_EXECUTE_TEST(test_span);
 }

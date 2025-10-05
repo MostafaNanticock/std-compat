@@ -1,40 +1,52 @@
 #ifndef PM_STD_COMPAT_LAYER_COMMON_MSVC_CRT_DETECTION
 #define PM_STD_COMPAT_LAYER_COMMON_MSVC_CRT_DETECTION
 
-// Detect MSVC toolset and map to CRT family
-#if !defined(_MSC_VER)
+#ifndef _MSC_VER
 #    error "This header requires MSVC."
 #endif
 
-// VS2015 (v140)
-#if _MSC_VER == 1900
-#    define MSVC_TOOLSET 140
-#    define MSVC_VERSION_STR "Visual Studio 2015 (v140)"
-#    define MSVC_CRT_FAMILY "VC++ 2015 CRT (vcruntime140.dll)"
+// ---------------- Compiler version ----------------
 
-// VS2017 (v141)
-#elif _MSC_VER >= 1910 && _MSC_VER <= 1916
-#    define MSVC_TOOLSET 141
-#    define MSVC_VERSION_STR "Visual Studio 2017 (v141)"
-#    define MSVC_CRT_FAMILY "VC++ 2017 CRT (vcruntime140.dll)"
+// Extract major/minor from _MSC_VER
+#define PM_MSVC_VER_MAJOR (_MSC_VER / 100)
+#define PM_MSVC_VER_MINOR (_MSC_VER % 100)
 
-// VS2019 (v142)
-#elif _MSC_VER >= 1920 && _MSC_VER <= 1929
-#    define MSVC_TOOLSET 142
-#    define MSVC_VERSION_STR "Visual Studio 2019 (v142)"
-#    define MSVC_CRT_FAMILY "VC++ 2019 CRT (vcruntime140.dll)"
-
-// VS2022 (v143+)
-#elif _MSC_VER >= 1930
-#    define MSVC_TOOLSET 143
-#    define MSVC_VERSION_STR "Visual Studio 2022+ (v143)"
-#    define MSVC_CRT_FAMILY "VC++ 2022 CRT (vcruntime140.dll)"
-
-// Unknown future version
+// Extract build from _MSC_FULL_VER
+#if _MSC_FULL_VER >= 1000000000
+// 10 digits: MMNNBBBBBB
+#    define PM_MSVC_VER_BUILD ((_MSC_FULL_VER / 100000) % 100000)
 #else
-#    define MSVC_TOOLSET 0
-#    define MSVC_VERSION_STR "Unknown future MSVC"
-#    define MSVC_CRT_FAMILY "Unknown CRT family"
+// 9 digits: MMNNBBBBB
+#    define PM_MSVC_VER_BUILD ((_MSC_FULL_VER / 10000) % 100000)
 #endif
 
-#endif
+// Revision
+#define PM_MSVC_VER_REVISION _MSC_BUILD
+
+// ---------------- UCRT version ----------------
+#include <crtversion.h> // defines _VC_CRT_MAJOR_VERSION, etc.
+
+#define PM_UCRT_VER_MAJOR _VC_CRT_MAJOR_VERSION
+#define PM_UCRT_VER_MINOR _VC_CRT_MINOR_VERSION
+#define PM_UCRT_VER_BUILD _VC_CRT_BUILD_VERSION
+#define PM_UCRT_VER_REVISION _VC_CRT_RBUILD_VERSION
+
+// ---------------- String helpers ----------------
+#define PM_STRINGIFY2(x) #x
+#define PM_STRINGIFY(x) PM_STRINGIFY2(x)
+
+// clang-format off
+#define PM_MSVC_VERSION_STRING \
+    PM_STRINGIFY(PM_MSVC_VER_MAJOR) "." \
+    PM_STRINGIFY(PM_MSVC_VER_MINOR) "." \
+    PM_STRINGIFY(PM_MSVC_VER_BUILD) "." \
+    PM_STRINGIFY(PM_MSVC_VER_REVISION)
+
+#define PM_UCRT_VERSION_STRING \
+    PM_STRINGIFY(PM_UCRT_VER_MAJOR) "." \
+    PM_STRINGIFY(PM_UCRT_VER_MINOR) "." \
+    PM_STRINGIFY(PM_UCRT_VER_BUILD) "." \
+    PM_STRINGIFY(PM_UCRT_VER_REVISION)
+// clang-format on
+
+#endif // PM_STD_COMPAT_LAYER_COMMON_MSVC_CRT_DETECTION
