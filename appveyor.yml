@@ -1,0 +1,58 @@
+version: 1.0.{build}
+
+environment:
+  matrix:
+    # VS2015
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: "Visual Studio 14 2015"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: "Visual Studio 14 2015 Win64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: "Visual Studio 14 2015 ARM"
+
+    # VS2017
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      GENERATOR: "Visual Studio 15 2017"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      GENERATOR: "Visual Studio 15 2017 Win64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      GENERATOR: "Visual Studio 15 2017 ARM"
+
+    # VS2019
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "Visual Studio 16 2019"
+      ARCH: "-A Win32"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "Visual Studio 16 2019"
+      ARCH: "-A x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "Visual Studio 16 2019"
+      ARCH: "-A ARM"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "Visual Studio 16 2019"
+      ARCH: "-A ARM64"
+
+    # VS2022
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      GENERATOR: "Visual Studio 17 2022"
+      ARCH: "-A Win32"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      GENERATOR: "Visual Studio 17 2022"
+      ARCH: "-A x64"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      GENERATOR: "Visual Studio 17 2022"
+      ARCH: "-A ARM"
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      GENERATOR: "Visual Studio 17 2022"
+      ARCH: "-A ARM64"
+
+build_script:
+  - cmd: |
+      echo Generator: %GENERATOR% %ARCH%
+      cmake -S . -B build -G "%GENERATOR%" %ARCH%
+      cmake --build build --config Release
+
+test_script:
+  - cmd: |
+      cd build
+      ctest -C Release --output-on-failure
