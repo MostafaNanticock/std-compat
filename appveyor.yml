@@ -13,34 +13,27 @@ environment:
       GENERATOR: "Visual Studio 17 2022"
 
 build_script:
-  - cmd: |
-      echo === Building with %GENERATOR% ===
-      call ci\setup-vs-env.cmd
-      echo Windows SDK version is: %WindowsSDKVersion%
+  - ps: |
+      function Build-And-Test($Generator, $Arch, $Dir) {
+          Write-Host "=== Building $Arch with $Generator ==="
+          cmake -S . -B $Dir -G "$Generator" -A $Arch
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      rem --- x86 ---
-      cmake -S . -B build_x86 -G "%GENERATOR%" -A Win32
-      cmake --build build_x86 --config Release
+          cmake --build $Dir --config Release
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-      rem --- x64 ---
-      cmake -S . -B build_x64 -G "%GENERATOR%" -A x64
-      cmake --build build_x64 --config Release
-
-    # rem --- ARM (skip if not supported) ---
-    # cmake -S . -B build_arm -G "%GENERATOR%" -A ARM || echo "ARM not supported on this image"
-    # cmake -S . -B build_arm -G "%GENERATOR%" -A ARM && cmake --build build_arm --config Release || echo "ARM build skipped"
-
-    # rem --- ARM64 (skip if not supported) ---
-    # cmake -S . -B build_arm64 -G "%GENERATOR%" -A ARM64 || echo "ARM64 not supported on this image"
-    # cmake -S . -B build_arm64 -G "%GENERATOR%" -A ARM64 && cmake --build build_arm64 --config Release || echo "ARM64 build skipped"
-
-test_script:
-  - cmd: |
-      for %%d in (build_x86 build_x64 build_arm64) do (
-        if exist %%d (
-          echo === Running tests in %%d ===
-          cd %%d
+          Write-Host "=== Running tests in $Dir ==="
+          Push-Location $Dir
           ctest -C Release --output-on-failure --timeout 60
-          cd ..
-        )
-      )
+          $result = $LASTEXITCODE
+          Pop-Location
+          if ($result -ne 0) { exit $result }
+      }
+
+      # Call the function for each architecture
+      Build-And-Test "$env:GENERATOR" Win32 build_x86
+      Build-And-Test "$env:GENERATOR" x64   build_x64
+
+      # Optional ARM/ARM64
+      # Build-And-Test "$env:GENERATOR" ARM   build_arm
+      # Build-And-Test "$env:GENERATOR" ARM64 build_arm64
