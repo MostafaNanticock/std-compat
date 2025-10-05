@@ -1,3 +1,5 @@
+/build
+
 # Prerequisites
 *.d
 
@@ -39,3 +41,4 @@
 
 # debug information files
 *.dwo
+*.user

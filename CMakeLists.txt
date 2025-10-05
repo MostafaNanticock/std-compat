@@ -4,6 +4,8 @@ project(StdCompatibilityLayer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+message(STATUS "Windows SDK version: $ENV{WindowsSDKVersion}")
+
 # Create a header-only interface library
 add_library(StdCompatibilityLayer INTERFACE)
 
