@@ -1,0 +1,80 @@
+#ifndef PM_STD_COMPAT_LAYER_FILESYSTEM
+#define PM_STD_COMPAT_LAYER_FILESYSTEM
+
+#include "filesystem.hpp"
+
+namespace std
+{
+namespace filesystem
+{
+    class path : public ghc::filesystem::path
+    {
+        using base = ghc::filesystem::path;
+
+    public:
+        using base::base; // inherit constructors
+        using base::operator=;
+    };
+
+    // ---- Type aliases ----
+    using ghc::filesystem::directory_entry;
+    using ghc::filesystem::directory_iterator;
+    using ghc::filesystem::file_status;
+    using ghc::filesystem::filesystem_error;
+    using ghc::filesystem::recursive_directory_iterator;
+    using ghc::filesystem::space_info;
+
+    using ghc::filesystem::copy_options;
+    using ghc::filesystem::directory_options;
+    using ghc::filesystem::file_type;
+    using ghc::filesystem::perm_options;
+    using ghc::filesystem::perms;
+
+    using ghc::filesystem::file_time_type;
+
+    // ---- Function aliases ----
+    using ghc::filesystem::absolute;
+    using ghc::filesystem::canonical;
+    using ghc::filesystem::copy;
+    using ghc::filesystem::copy_file;
+    using ghc::filesystem::copy_symlink;
+    using ghc::filesystem::create_directories;
+    using ghc::filesystem::create_directory;
+    using ghc::filesystem::create_directory_symlink;
+    using ghc::filesystem::create_hard_link;
+    using ghc::filesystem::create_symlink;
+    using ghc::filesystem::current_path;
+    using ghc::filesystem::equivalent;
+    using ghc::filesystem::exists;
+    using ghc::filesystem::file_size;
+    using ghc::filesystem::hard_link_count;
+    using ghc::filesystem::last_write_time;
+    using ghc::filesystem::permissions;
+    using ghc::filesystem::proximate;
+    using ghc::filesystem::read_symlink;
+    using ghc::filesystem::relative;
+    using ghc::filesystem::remove;
+    using ghc::filesystem::remove_all;
+    using ghc::filesystem::rename;
+    using ghc::filesystem::resize_file;
+    using ghc::filesystem::space;
+    using ghc::filesystem::status;
+    using ghc::filesystem::symlink_status;
+    using ghc::filesystem::temp_directory_path;
+    using ghc::filesystem::weakly_canonical;
+
+    // ---- File type predicates ----
+    using ghc::filesystem::is_block_file;
+    using ghc::filesystem::is_character_file;
+    using ghc::filesystem::is_directory;
+    using ghc::filesystem::is_empty;
+    using ghc::filesystem::is_fifo;
+    using ghc::filesystem::is_other;
+    using ghc::filesystem::is_regular_file;
+    using ghc::filesystem::is_socket;
+    using ghc::filesystem::is_symlink;
+    using ghc::filesystem::status_known;
+} // namespace filesystem
+} // namespace std
+
+#endif

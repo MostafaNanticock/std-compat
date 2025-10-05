@@ -1,0 +1,51 @@
+#ifndef PM_STD_COMPAT_LAYER_VARIANT
+#define PM_STD_COMPAT_LAYER_VARIANT
+
+#include "monostate_compat.h"
+
+#ifndef variant_CONFIG_SELECT_VARIANT
+#    define variant_CONFIG_SELECT_VARIANT 1
+#endif
+
+#define variant_CONFIG_OVERRIDE_MONOSTATE PM::internal::monostate
+#define variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS std::bad_variant_access
+
+#include "variant.hpp"
+
+namespace std
+{
+template <class... Types>
+using variant = nonstd::variant<Types...>;
+
+// Exception
+#ifndef variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS
+// using nonstd::bad_variant_access;
+#endif
+
+#if _PM_LANG_VER < 201703L
+using nonstd::monostate;
+#endif
+
+// Non-member functions
+using nonstd::get;
+using nonstd::get_if;
+using nonstd::holds_alternative;
+// using nonstd::swap;
+using nonstd::visit;
+
+// Helper constants
+using nonstd::variant_npos;
+
+// Helper templates
+using nonstd::variant_size;
+#if __cplusplus >= 201703L
+using nonstd::variant_size_v;
+#endif
+
+using nonstd::variant_alternative;
+#if __cplusplus >= 201703L
+using nonstd::variant_alternative_t;
+#endif
+} // namespace std
+
+#endif

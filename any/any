@@ -1,0 +1,24 @@
+#ifndef PM_STD_COMPAT_LAYER_ANY
+#define PM_STD_COMPAT_LAYER_ANY
+
+#ifndef any_CONFIG_SELECT_ANY
+#    define any_CONFIG_SELECT_ANY 1
+#endif
+
+#include "any.hpp"
+
+namespace std
+{
+// Core type & exception
+using nonstd::any;
+using nonstd::bad_any_cast;
+
+// Non-member functions
+using nonstd::any_cast;
+using nonstd::make_any;
+
+// Specializes std::swap for std::any
+using nonstd::swap;
+} // namespace std
+
+#endif

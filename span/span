@@ -1,0 +1,19 @@
+#ifndef PM_STD_COMPAT_LAYER_SPAN
+#define PM_STD_COMPAT_LAYER_SPAN
+
+#include "span.hpp"
+
+namespace std
+{
+template <class ElementType, std::size_t Extent = tcb::dynamic_extent>
+using span = tcb::span<ElementType, Extent>;
+
+// Helper constant
+using tcb::dynamic_extent;
+
+// Non-member functions
+using tcb::as_bytes;
+using tcb::as_writable_bytes;
+} // namespace std
+
+#endif

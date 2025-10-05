@@ -1,0 +1,20 @@
+#ifndef PM_STD_COMPAT_LAYER_EXPECTED_COMPATIBILITY
+#define PM_STD_COMPAT_LAYER_EXPECTED_COMPATIBILITY
+
+#include <expected>
+
+namespace std_compatibility
+{
+// NOTES: Always use this alias when writing portable code that must compile on both pre‑C++17 and C++17+.
+// Rationale: Provides a single, stable name for the unexpected type across all supported C++ versions,
+// avoiding conflicts with the legacy std::unexpected function in older standards.
+#if nsel_CPP17_OR_GREATER
+template <class E>
+using unexpected = nonstd::unexpected<E>;
+#else
+template <class E>
+using unexpected = nonstd::unexpected_type<E>;
+#endif
+} // namespace std_compatibility
+
+#endif

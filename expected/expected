@@ -1,0 +1,37 @@
+#ifndef PM_STD_COMPAT_LAYER_EXPECTED
+#define PM_STD_COMPAT_LAYER_EXPECTED
+
+#ifndef nsel_CONFIG_SELECT_EXPECTED
+#    define nsel_CONFIG_SELECT_EXPECTED 1
+#endif
+
+#include "expected.hpp"
+
+namespace std
+{
+template <class T, class E>
+using expected = nonstd::expected<T, E>;
+
+#if nsel_CPP17_OR_GREATER // NOTES: the std::unexpected struct is only defined for C++17 onward, use std_compatibility::unexpected instead
+// Rationale: In C++11, std::unexpected is a legacy function name that got removed in C++17,
+// so it cannot be safely redefined as a template.
+// This alias exists here only when the standard allows it, to match the C++17+ expected API.
+// We provide std::compatibility_unexpected that is safe to be used in any C++ version.
+// include <expected_compatibility> header instead if you want to use it
+template <class E>
+using unexpected = nonstd::unexpected<E>;
+#endif
+
+// Exception: bad_expected_access<E> (and bad_expected_access<void> specialization if provided)
+template <class E = void>
+using bad_expected_access = nonstd::bad_expected_access<E>;
+
+// Tag type and tag object: unexpect_t / unexpect
+using nonstd::unexpect;
+using nonstd::unexpect_t;
+
+// Non-member customization point: swap(std::expected, std::expected)
+using nonstd::swap;
+} // namespace std
+
+#endif

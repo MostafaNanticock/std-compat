@@ -1,0 +1,41 @@
+#ifndef PM_STD_COMPAT_LAYER_OPTIONAL
+#define PM_STD_COMPAT_LAYER_OPTIONAL
+
+#ifndef optional_CONFIG_SELECT_OPTIONAL
+#    define optional_CONFIG_SELECT_OPTIONAL 1
+#endif
+
+#include "optional.hpp"
+
+// #include "optional-fun.hpp" // This is supposedd to add support for monadic operations
+
+namespace std
+{
+template <class T>
+using optional = nonstd::optional<T>;
+
+// Exception
+using nonstd::bad_optional_access;
+
+#ifdef PM_SHIM_STD_IN_PLACE // FIXME: define when exactly do we need to enable this
+#    ifndef __cpp_lib_in_place_t
+using nonstd::in_place_t;
+#    endif
+
+#    ifndef __cpp_lib_in_place
+using nonstd::in_place;
+#    endif
+#endif
+
+// nullopt and its tag type
+using nonstd::nullopt;
+using nonstd::nullopt_t;
+
+using nonstd::make_optional;
+
+// // Non-member swap customization point
+// using nonstd::optfun_lite::swap;
+
+} // namespace std
+
+#endif
