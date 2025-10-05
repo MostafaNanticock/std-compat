@@ -36,5 +36,11 @@ build_script:
 
 test_script:
   - cmd: |
-      cd build_x64
-      ctest -C Release --output-on-failure
+      for %%d in (build_x86 build_x64 build_arm64) do (
+        if exist %%d (
+          echo === Running tests in %%d ===
+          cd %%d
+          ctest -C Release --output-on-failure --timeout 60
+          cd ..
+        )
+      )
