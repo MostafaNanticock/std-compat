@@ -15,6 +15,8 @@ environment:
 build_script:
   - cmd: |
       echo === Building with %GENERATOR% ===
+      call ci\setup-vs-env.cmd %VS_RANGE%
+      echo Windows SDK version is: %WindowsSDKVersion%
 
       rem --- x86 ---
       cmake -S . -B build_x86 -G "%GENERATOR%" -A Win32
