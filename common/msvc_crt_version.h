@@ -5,6 +5,9 @@
 #    error "This header requires MSVC."
 #endif
 
+#include <crtversion.h>
+#include <string>
+
 // ---------------- Compiler version ----------------
 
 // Extract major/minor from _MSC_VER
@@ -24,29 +27,40 @@
 #define PM_MSVC_VER_REVISION _MSC_BUILD
 
 // ---------------- UCRT version ----------------
-#include <crtversion.h> // defines _VC_CRT_MAJOR_VERSION, etc.
 
 #define PM_UCRT_VER_MAJOR _VC_CRT_MAJOR_VERSION
 #define PM_UCRT_VER_MINOR _VC_CRT_MINOR_VERSION
 #define PM_UCRT_VER_BUILD _VC_CRT_BUILD_VERSION
 #define PM_UCRT_VER_REVISION _VC_CRT_RBUILD_VERSION
 
-// ---------------- String helpers ----------------
-#define PM_STRINGIFY2(x) #x
-#define PM_STRINGIFY(x) PM_STRINGIFY2(x)
+namespace PM
+{
+namespace internal
+{
+    inline std::string msvcVersionString()
+    {
+        // clang-format off
+        static std::string result = std::to_string(PM_MSVC_VER_MAJOR) + "." +
+                                    std::to_string(PM_MSVC_VER_MINOR) + "." +
+                                    std::to_string(PM_MSVC_VER_BUILD) + "." +
+                                    std::to_string(PM_MSVC_VER_REVISION);
+        // clang-format on
 
-// clang-format off
-#define PM_MSVC_VERSION_STRING \
-    PM_STRINGIFY(PM_MSVC_VER_MAJOR) "." \
-    PM_STRINGIFY(PM_MSVC_VER_MINOR) "." \
-    PM_STRINGIFY(PM_MSVC_VER_BUILD) "." \
-    PM_STRINGIFY(PM_MSVC_VER_REVISION)
+        return result;
+    }
 
-#define PM_UCRT_VERSION_STRING \
-    PM_STRINGIFY(PM_UCRT_VER_MAJOR) "." \
-    PM_STRINGIFY(PM_UCRT_VER_MINOR) "." \
-    PM_STRINGIFY(PM_UCRT_VER_BUILD) "." \
-    PM_STRINGIFY(PM_UCRT_VER_REVISION)
-// clang-format on
+    inline std::string ucrtVersionString()
+    {
+        // clang-format off
+        static std::string result = std::to_string(PM_UCRT_VER_MAJOR) + "." +
+                                    std::to_string(PM_UCRT_VER_MINOR) + "." +
+                                    std::to_string(PM_UCRT_VER_BUILD) + "." +
+                                    std::to_string(PM_UCRT_VER_REVISION);
+        // clang-format on
+
+        return result;
+    }
+} // namespace internal
+} // namespace PM
 
 #endif // PM_STD_COMPAT_LAYER_COMMON_MSVC_CRT_DETECTION
