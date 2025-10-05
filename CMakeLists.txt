@@ -11,6 +11,7 @@ add_library(StdCompatibilityLayer INTERFACE)
 
 # List of directories containing your custom std headers
 set(STD_COMPAT_INCLUDE_DIRS
+    ${CMAKE_CURRENT_SOURCE_DIR}/common
     ${CMAKE_CURRENT_SOURCE_DIR}/any
     ${CMAKE_CURRENT_SOURCE_DIR}/expected
     ${CMAKE_CURRENT_SOURCE_DIR}/filesystem
@@ -21,6 +22,7 @@ set(STD_COMPAT_INCLUDE_DIRS
 
 target_sources(StdCompatibilityLayer
     INTERFACE
+        ${CMAKE_CURRENT_SOURCE_DIR}/common/msvc_crt_version.h
         ${CMAKE_CURRENT_SOURCE_DIR}/any/any
         ${CMAKE_CURRENT_SOURCE_DIR}/any/any.hpp
         ${CMAKE_CURRENT_SOURCE_DIR}/expected/expected
