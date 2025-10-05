@@ -25,7 +25,7 @@ using variant = nonstd::variant<Types...>;
 
 // Exception
 #ifndef variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS
-// using nonstd::bad_variant_access;
+using nonstd::bad_variant_access;
 #endif
 
 #if _PM_LANG_VER < 201703L
