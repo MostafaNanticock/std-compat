@@ -13,6 +13,7 @@
 // so we will use it even under c++11 and c++14
 // if the compiler supported c++17 then this definition existed
 #if defined(_MSC_VER) && _PM_CC_SUPPORTS_CXX17
+#    include <exception>
 #    define variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS std::bad_variant_access
 #endif
 
