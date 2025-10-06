@@ -1,18 +1,8 @@
 set(TEST_DEPENDENCIES
-    StdCompat_expected
+    StdCompat::expected
 )
 
-pm_skip_if_targets_dont_exist(${TEST_DEPENDENCIES})
-
-add_executable(tst_expected
+std_compat_add_test(tst_expected
+    ${TEST_DEPENDENCIES}
     tst_expected.cpp
-)
-target_link_libraries(tst_expected
-    PRIVATE
-        ${TEST_DEPENDENCIES}
-)
-
-add_test(
-    NAME tst_expected
-    COMMAND tst_expected
 )

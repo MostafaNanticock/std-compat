@@ -1,18 +1,8 @@
 set(TEST_DEPENDENCIES
-    StdCompat_span
+    StdCompat::span
 )
 
-pm_skip_if_targets_dont_exist(${TEST_DEPENDENCIES})
-
-add_executable(tst_span
+std_compat_add_test(tst_span
+    ${TEST_DEPENDENCIES}
     tst_span.cpp
-)
-target_link_libraries(tst_span
-    PRIVATE
-        ${TEST_DEPENDENCIES}
-)
-
-add_test(
-    NAME tst_span
-    COMMAND tst_span
 )

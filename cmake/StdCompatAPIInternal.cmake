@@ -8,8 +8,20 @@ function(_pm_detect_cxx_standards)
     set(_available "")
 
     foreach(std IN LISTS _standards)
-        # Try the canonical flag for this standard
-        check_cxx_compiler_flag("-std=c++${std}" HAS_CXX${std})
+        # Try the appropriate flag for this standard based on compiler
+        if(MSVC)
+            # MSVC uses /std:c++XX format, but only supports 14, 17, 20, 23
+            if(std GREATER_EQUAL 14)
+                check_cxx_compiler_flag("/std:c++${std}" HAS_CXX${std})
+            else()
+                # MSVC doesn't have a specific flag for C++11, it's the default
+                set(HAS_CXX${std} TRUE)
+            endif()
+        else()
+            # GCC/Clang use -std=c++XX format
+            check_cxx_compiler_flag("-std=c++${std}" HAS_CXX${std})
+        endif()
+        
         if(HAS_CXX${std})
             list(APPEND _available ${std})
         endif()
