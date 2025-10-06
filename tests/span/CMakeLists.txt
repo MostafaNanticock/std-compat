@@ -1,9 +1,15 @@
+set(TEST_DEPENDENCIES
+    StdCompat_span
+)
+
+pm_skip_if_targets_dont_exist(${TEST_DEPENDENCIES})
+
 add_executable(tst_span
     tst_span.cpp
 )
 target_link_libraries(tst_span
     PRIVATE
-    StdCompat_span
+        ${TEST_DEPENDENCIES}
 )
 
 add_test(
