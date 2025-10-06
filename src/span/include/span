@@ -1,7 +1,7 @@
 #ifndef PM_STD_COMPAT_LAYER_SPAN
 #define PM_STD_COMPAT_LAYER_SPAN
 
-#include "span.hpp"
+#include "std-compat/internal/span.hpp"
 
 namespace std
 {

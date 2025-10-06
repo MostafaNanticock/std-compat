@@ -1,10 +1,10 @@
 #ifndef PM_STD_COMPAT_LAYER_VARIANT
 #define PM_STD_COMPAT_LAYER_VARIANT
 
-#include "monostate_compat.h"
+#include "std-compat/internal/monostate_compat.h"
 
 #ifdef _MSC_VER
-#    include <../common/msvc_crt_version.h>
+#    include <std-compat/internal/msvc_crt_version.h>
 #endif
 
 #ifndef variant_CONFIG_SELECT_VARIANT
@@ -16,7 +16,7 @@
 #    define variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS std::bad_variant_access
 #endif
 
-#include "variant.hpp"
+#include "std-compat/internal/variant.hpp"
 
 namespace std
 {

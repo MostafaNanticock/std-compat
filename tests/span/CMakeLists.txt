@@ -3,7 +3,7 @@ add_executable(tst_span
 )
 target_link_libraries(tst_span
     PRIVATE
-    StdCompatibilityLayer
+    StdCompat_span
 )
 
 add_test(

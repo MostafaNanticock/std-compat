@@ -3,7 +3,7 @@ add_executable(tst_filesystem
 )
 target_link_libraries(tst_filesystem
     PRIVATE
-    StdCompatibilityLayer
+    StdCompat_filesystem
 )
 
 add_test(

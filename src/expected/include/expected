@@ -5,7 +5,7 @@
 #    define nsel_CONFIG_SELECT_EXPECTED 1
 #endif
 
-#include "expected.hpp"
+#include "std-compat/internal/expected.hpp"
 
 namespace std
 {
