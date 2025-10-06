@@ -65,3 +65,16 @@ macro(pm_skip_if_targets_dont_exist)
         return()
     endif()
 endmacro()
+
+# Usage:
+#   _pm_add_supported_cxx_standards_definitions(<Target>)
+#
+macro(_pm_add_supported_cxx_standards_definitions target)
+    foreach(_std IN LISTS PM_AVAILABLE_CXX_STANDARDS)
+        target_compile_definitions(${target}
+            INTERFACE
+                _PM_CC_SUPPORTS_CXX${_std}
+        )
+    endforeach()
+endmacro()
+

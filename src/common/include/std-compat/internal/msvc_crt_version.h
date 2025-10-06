@@ -33,6 +33,13 @@
 #define PM_UCRT_VER_BUILD _VC_CRT_BUILD_VERSION
 #define PM_UCRT_VER_REVISION _VC_CRT_RBUILD_VERSION
 
+// Composite version for easier comparison
+#define PM_UCRT_VER (PM_UCRT_VER_MAJOR * 10000000 + PM_UCRT_VER_MINOR * 100000 + PM_UCRT_VER_BUILD)
+
+// Known UCRT version constants for major Visual Studio releases
+// Based on when std::variant and related components were introduced
+#define PM_UCRT_VER_VS2017_15_0 140000000  // Visual Studio 2017 15.0 - First version with std::variant support
+
 namespace PM
 {
 namespace internal

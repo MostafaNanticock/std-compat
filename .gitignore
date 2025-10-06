@@ -42,3 +42,4 @@
 # debug information files
 *.dwo
 *.user
+*.autosave

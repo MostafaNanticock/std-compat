@@ -3,16 +3,16 @@
 
 #include "std-compat/internal/monostate_compat.h"
 
-#ifdef _MSC_VER
-#    include <std-compat/internal/msvc_crt_version.h>
-#endif
-
 #ifndef variant_CONFIG_SELECT_VARIANT
 #    define variant_CONFIG_SELECT_VARIANT 1
 #endif
 
 #define variant_CONFIG_OVERRIDE_MONOSTATE PM::internal::monostate
-#if __cplusplus >= 201703L || defined(_MSC_VER) && PM_UCRT_VER_MAJOR >= 14 && PM_UCRT_VER_MINOR >= 43
+
+// MSVC defines the std::bad_variant_access in the <exception> header,
+// so we will use it even under c++11 and c++14
+// if the compiler supported c++17 then this definition existed
+#if defined(_MSC_VER) && _PM_CC_SUPPORTS_CXX17
 #    define variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS std::bad_variant_access
 #endif
 

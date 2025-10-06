@@ -23,6 +23,8 @@ target_include_directories(StdCompat_variant
         $<BUILD_INTERFACE:${INCLUDE_DIRS}>
 )
 
+_pm_add_supported_cxx_standards_definitions(StdCompat_variant)
+
 target_compile_definitions(StdCompat_variant
     INTERFACE
         variant_CONFIG_SELECT_VARIANT=1
