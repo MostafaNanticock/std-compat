@@ -3,6 +3,7 @@ set(INCLUDE_DIRS
 )
 
 add_library(StdCompat_span INTERFACE)
+add_library(StdCompat::span ALIAS StdCompat_span)
 
 target_sources(StdCompat_span
 INTERFACE

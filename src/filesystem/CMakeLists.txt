@@ -3,6 +3,7 @@ set(INCLUDE_DIRS
 )
 
 add_library(StdCompat_filesystem INTERFACE)
+add_library(StdCompat::filesystem ALIAS StdCompat_filesystem)
 
 target_sources(StdCompat_filesystem
 INTERFACE

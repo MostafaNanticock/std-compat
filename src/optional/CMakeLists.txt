@@ -3,6 +3,7 @@ set(INCLUDE_DIRS
 )
 
 add_library(StdCompat_optional INTERFACE)
+add_library(StdCompat::optional ALIAS StdCompat_optional)
 
 target_sources(StdCompat_optional
 INTERFACE
