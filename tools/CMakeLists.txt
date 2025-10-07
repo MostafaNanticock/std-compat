@@ -1,0 +1,1 @@
+add_subdirectory(check_ucrt_version)
