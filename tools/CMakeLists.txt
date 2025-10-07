@@ -1,1 +1,1 @@
-add_subdirectory(check_ucrt_version)
+add_subdirectory(crt_version_check)

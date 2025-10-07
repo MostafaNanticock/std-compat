@@ -1,0 +1,22 @@
+#pragma once
+#include <_mingw.h>
+
+#ifdef __MINGW64_VERSION_MAJOR
+    #define PM_CRT_VERSION_MAJOR __MINGW64_VERSION_MAJOR
+    #define PM_CRT_VERSION_MINOR __MINGW64_VERSION_MINOR
+    #define PM_CRT_VERSION_BUILD 0
+    #define PM_CRT_VERSION_REVISION 0
+    #define PM_CRT_NAME "MinGW-w64 CRT"
+#elif defined(__MINGW32_MAJOR_VERSION)
+    #define PM_CRT_VERSION_MAJOR __MINGW32_MAJOR_VERSION
+    #define PM_CRT_VERSION_MINOR __MINGW32_MINOR_VERSION
+    #define PM_CRT_VERSION_BUILD 0
+    #define PM_CRT_VERSION_REVISION 0
+    #define PM_CRT_NAME "MinGW CRT"
+#else
+    #define PM_CRT_VERSION_MAJOR 0
+    #define PM_CRT_VERSION_MINOR 0
+    #define PM_CRT_VERSION_BUILD 0
+    #define PM_CRT_VERSION_REVISION 0
+    #define PM_CRT_NAME "Unknown MinGW CRT"
+#endif

@@ -79,43 +79,59 @@ macro(_pm_add_supported_cxx_standards_definitions target)
 endmacro()
 
 # Usage:
-#   _pm_check_ucrt_version()
+#   _pm_check_crt_version()
 #
-# Detects and displays the UCRT version during configuration.
-# Only runs on MSVC/Windows platforms where UCRT is relevant.
+# Detects and displays the CRT version during configuration.
 #
-function(_pm_check_ucrt_version)
-    # Only check UCRT version on MSVC/Windows
-    if(NOT MSVC)
+function(_pm_check_crt_version)
+    if(DEFINED PM_CRT_VERSION_CHECKED)
         return()
     endif()
+    set(PM_CRT_VERSION_CHECKED TRUE CACHE INTERNAL "CRT version has been checked")
 
-    # Avoid running the check multiple times
-    if(DEFINED PM_UCRT_VERSION_CHECKED)
-        return()
-    endif()
-    set(PM_UCRT_VERSION_CHECKED TRUE CACHE INTERNAL "UCRT version has been checked")
+    message(STATUS "Checking CRT version...")
 
-    message(STATUS "Checking UCRT version...")
-    
-    # Try to compile and run the UCRT version checker
-    try_run(UCRT_CHECK_RUN_RESULT UCRT_CHECK_COMPILE_RESULT
-        ${CMAKE_CURRENT_BINARY_DIR}/ucrt_check
-        ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_ucrt_version/main.cpp
-        COMPILE_OUTPUT_VARIABLE UCRT_CHECK_COMPILE_OUTPUT
-        RUN_OUTPUT_VARIABLE UCRT_VERSION_OUTPUT
+    try_run(CRT_CHECK_RUN_RESULT CRT_CHECK_COMPILE_RESULT
+        ${CMAKE_CURRENT_BINARY_DIR}/crt_check
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/crt_version_check/crt_version_check.cpp
+        COMPILE_OUTPUT_VARIABLE CRT_CHECK_COMPILE_OUTPUT
+        RUN_OUTPUT_VARIABLE CRT_VERSION_OUTPUT
     )
 
-    if(UCRT_CHECK_COMPILE_RESULT AND UCRT_CHECK_RUN_RESULT EQUAL 0)
-        string(STRIP "${UCRT_VERSION_OUTPUT}" UCRT_VERSION_OUTPUT)
-        message(STATUS "UCRT Version: ${UCRT_VERSION_OUTPUT}")
-        set(PM_UCRT_VERSION "${UCRT_VERSION_OUTPUT}" CACHE STRING "Detected UCRT version")
+    if(CRT_CHECK_COMPILE_RESULT AND CRT_CHECK_RUN_RESULT EQUAL 0)
+        string(REPLACE "\n" ";" CRT_VERSION_LINES "${CRT_VERSION_OUTPUT}")
+
+        foreach(line IN LISTS CRT_VERSION_LINES)
+            if(line MATCHES "^PM_CRT_NAME=(.*)")
+                string(STRIP "${CMAKE_MATCH_1}" _raw_crt_name)
+                string(REGEX REPLACE "\n" "" _clean_crt_name "${_raw_crt_name}")
+                set(PM_CRT_NAME "${_clean_crt_name}" CACHE STRING "Detected CRT name")
+            elseif(line MATCHES "^PM_CRT_VERSION_STRING=(.*)")
+                string(STRIP "${CMAKE_MATCH_1}" _version_string)
+                set(PM_CRT_VERSION_STRING "${_version_string}" CACHE STRING "Full CRT version string")
+            elseif(line MATCHES "^PM_CRT_VERSION_MAJOR=(.*)")
+                set(PM_CRT_VERSION_MAJOR "${CMAKE_MATCH_1}" CACHE STRING "CRT major version")
+            elseif(line MATCHES "^PM_CRT_VERSION_MINOR=(.*)")
+                set(PM_CRT_VERSION_MINOR "${CMAKE_MATCH_1}" CACHE STRING "CRT minor version")
+            elseif(line MATCHES "^PM_CRT_VERSION_BUILD=(.*)")
+                set(PM_CRT_VERSION_BUILD "${CMAKE_MATCH_1}" CACHE STRING "CRT build version")
+            elseif(line MATCHES "^PM_CRT_VERSION_REVISION=(.*)")
+                set(PM_CRT_VERSION_REVISION "${CMAKE_MATCH_1}" CACHE STRING "CRT revision version")
+            endif()
+        endforeach()
+
+        message(STATUS "CRT Name    : ${PM_CRT_NAME}")
+        message(STATUS "CRT Version : ${PM_CRT_VERSION_STRING}")
     else()
-        message(WARNING "Failed to determine UCRT version")
-        if(NOT UCRT_CHECK_COMPILE_RESULT)
-            message(STATUS "Compile error: ${UCRT_CHECK_COMPILE_OUTPUT}")
+        message(WARNING "Failed to determine CRT version")
+        if(NOT CRT_CHECK_COMPILE_RESULT)
+            message(STATUS "Compile error:\n${CRT_CHECK_COMPILE_OUTPUT}")
         endif()
-        set(PM_UCRT_VERSION "unknown" CACHE STRING "Detected UCRT version")
+        set(PM_CRT_NAME "unknown" CACHE STRING "Detected CRT name")
+        set(PM_CRT_VERSION_STRING "0.0.0.0" CACHE STRING "Full CRT version string")
+        set(PM_CRT_VERSION_MAJOR 0 CACHE STRING "CRT major version")
+        set(PM_CRT_VERSION_MINOR 0 CACHE STRING "CRT minor version")
+        set(PM_CRT_VERSION_BUILD 0 CACHE STRING "CRT build version")
+        set(PM_CRT_VERSION_REVISION 0 CACHE STRING "CRT revision version")
     endif()
 endfunction()
-
