@@ -1,6 +1,7 @@
 include(StdCompatAPIInternal)
 
 _pm_detect_cxx_standards()
+_pm_check_ucrt_version()
 
 # Usage:
 #   std_compat_add_test(

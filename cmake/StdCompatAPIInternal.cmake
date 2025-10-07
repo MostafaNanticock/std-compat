@@ -78,3 +78,44 @@ macro(_pm_add_supported_cxx_standards_definitions target)
     endforeach()
 endmacro()
 
+# Usage:
+#   _pm_check_ucrt_version()
+#
+# Detects and displays the UCRT version during configuration.
+# Only runs on MSVC/Windows platforms where UCRT is relevant.
+#
+function(_pm_check_ucrt_version)
+    # Only check UCRT version on MSVC/Windows
+    if(NOT MSVC)
+        return()
+    endif()
+
+    # Avoid running the check multiple times
+    if(DEFINED PM_UCRT_VERSION_CHECKED)
+        return()
+    endif()
+    set(PM_UCRT_VERSION_CHECKED TRUE CACHE INTERNAL "UCRT version has been checked")
+
+    message(STATUS "Checking UCRT version...")
+    
+    # Try to compile and run the UCRT version checker
+    try_run(UCRT_CHECK_RUN_RESULT UCRT_CHECK_COMPILE_RESULT
+        ${CMAKE_CURRENT_BINARY_DIR}/ucrt_check
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/check_ucrt_version/main.cpp
+        COMPILE_OUTPUT_VARIABLE UCRT_CHECK_COMPILE_OUTPUT
+        RUN_OUTPUT_VARIABLE UCRT_VERSION_OUTPUT
+    )
+
+    if(UCRT_CHECK_COMPILE_RESULT AND UCRT_CHECK_RUN_RESULT EQUAL 0)
+        string(STRIP "${UCRT_VERSION_OUTPUT}" UCRT_VERSION_OUTPUT)
+        message(STATUS "UCRT Version: ${UCRT_VERSION_OUTPUT}")
+        set(PM_UCRT_VERSION "${UCRT_VERSION_OUTPUT}" CACHE STRING "Detected UCRT version")
+    else()
+        message(WARNING "Failed to determine UCRT version")
+        if(NOT UCRT_CHECK_COMPILE_RESULT)
+            message(STATUS "Compile error: ${UCRT_CHECK_COMPILE_OUTPUT}")
+        endif()
+        set(PM_UCRT_VERSION "unknown" CACHE STRING "Detected UCRT version")
+    endif()
+endfunction()
+
