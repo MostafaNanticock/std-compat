@@ -24,6 +24,45 @@ namespace std
 template <class... Types>
 using variant = nonstd::variant<Types...>;
 
+//
+// MSVC 14 (C++11, C++14): success all
+// MSVC 15 (C++11, C++14, C++17): failure all
+/*
+ C++11:
+    'bad_variant_access': is not a member of 'std'
+    functional(23): note: see declaration of 'std'
+
+ C++14:
+    'bad_variant_access': is not a member of 'std'
+    functional(23): note: see declaration of 'std'
+
+ C++17:
+    error C2039: 'monostate': is not a member of 'std'
+    iostream(14): note: see declaration of 'std'
+*/
+
+// MSVC 16 (C++11, C++14, C++17, C++20): failure all
+/*
+ C++11:
+    'bad_variant_access': is not a member of 'std'
+    functional(23): note: see declaration of 'std'
+
+ C++14:
+    'bad_variant_access': is not a member of 'std'
+    functional(23): note: see declaration of 'std'
+
+ C++17:
+    error C2039: 'monostate': is not a member of 'std'
+    iostream(14): note: see declaration of 'std'
+
+ C++20:
+    error C2039: 'monostate': is not a member of 'std'
+    iostream(14): note: see declaration of 'std'
+*/
+
+// MSVC 17 (C++11, C++14, C++17, C++20): success all
+//
+
 // Exception
 #ifndef variant_CONFIG_OVERRIDE_BAD_VARIANT_ACCESS
 using nonstd::bad_variant_access;
