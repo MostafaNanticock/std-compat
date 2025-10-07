@@ -1,5 +1,5 @@
 set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    # ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
 add_library(StdCompat_variant INTERFACE)
@@ -7,8 +7,8 @@ add_library(StdCompat::variant ALIAS StdCompat_variant)
 
 target_sources(StdCompat_variant
 INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp
+    # ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
+    # ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp
     ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/monostate_compat.h
 )
 
