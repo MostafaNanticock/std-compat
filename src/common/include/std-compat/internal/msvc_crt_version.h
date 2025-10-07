@@ -36,9 +36,15 @@
 // Composite version for easier comparison
 #define PM_UCRT_VER (PM_UCRT_VER_MAJOR * 10000000 + PM_UCRT_VER_MINOR * 100000 + PM_UCRT_VER_BUILD)
 
-// Known UCRT version constants for major Visual Studio releases
-// Based on when std::variant and related components were introduced
-#define PM_UCRT_VER_VS2017_15_0 140000000  // Visual Studio 2017 15.0 - First version with std::variant support
+// Known compiler version constants for major Visual Studio releases
+// Use compiler version instead of UCRT version for more reliable detection
+#define PM_MSVC_VER_VS2015      1900  // Visual Studio 2015 (14.0)
+#define PM_MSVC_VER_VS2017_15_0 1910  // Visual Studio 2017 15.0 - First version with std::variant support
+#define PM_MSVC_VER_VS2017_15_3 1911  // Visual Studio 2017 15.3 - Improved std::variant support  
+#define PM_MSVC_VER_VS2017_15_5 1912  // Visual Studio 2017 15.5
+#define PM_MSVC_VER_VS2017_15_7 1914  // Visual Studio 2017 15.7
+#define PM_MSVC_VER_VS2017_15_9 1916  // Visual Studio 2017 15.9
+#define PM_MSVC_VER_VS2019_16_0 1920  // Visual Studio 2019 16.0
 
 namespace PM
 {

@@ -3,8 +3,10 @@
 
 #if defined(_MSC_VER) && defined(_MSVC_LANG)
 #    define _PM_LANG_VER _MSVC_LANG
-#    include <std-compat/internal/msvc_crt_version.h>
 #    include <xutility>
+#    if _PM_LANG_VER >= 201703L && _MSC_VER >= 1910  // VS2017 15.0+
+#        include <variant>
+#    endif
 #else
 #    define _PM_LANG_VER __cplusplus
 #endif
@@ -14,7 +16,7 @@ namespace PM
 namespace internal
 {
     struct monostate
-#if defined(_MSC_VER) && _PM_LANG_VER >= 201703L && PM_UCRT_VER >= PM_UCRT_VER_VS2017_15_0
+#if defined(_MSC_VER) && _PM_LANG_VER >= 201703L && _MSC_VER >= 1910  // VS2017 15.0+
         : public std::monostate
 #endif
     {
@@ -48,7 +50,7 @@ namespace internal
 } // namespace PM
 
 // Just a work-around for MSVC when using std >= C++17
-#if defined(_MSC_VER) && _PM_LANG_VER >= 201703L && PM_UCRT_VER >= PM_UCRT_VER_VS2017_15_0
+#if defined(_MSC_VER) && _PM_LANG_VER >= 201703L && _MSC_VER >= 1910  // VS2017 15.0+
 namespace std
 {
 inline constexpr bool operator==(monostate, monostate) noexcept
