@@ -28,4 +28,8 @@ _pm_add_supported_cxx_standards_definitions(StdCompat_variant)
 target_compile_definitions(StdCompat_variant
     INTERFACE
         variant_CONFIG_SELECT_VARIANT=1
+        PM_CRT_VERSION_MAJOR=${PM_CRT_VERSION_MAJOR}
+        PM_CRT_VERSION_MINOR=${PM_CRT_VERSION_MINOR}
+        PM_CRT_VERSION_BUILD=${PM_CRT_VERSION_BUILD}
+        PM_CRT_VERSION_REVISION=${PM_CRT_VERSION_REVISION}
 )

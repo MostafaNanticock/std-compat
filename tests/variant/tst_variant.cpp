@@ -1,11 +1,47 @@
 #include <testing.h>
 
-#define PM_HAS_STD_BAD_VARIANT_ACCESS _PM_CC_SUPPORTS_CXX17
+#if defined(_MSVC_LANG)
+#    define PM_CPP_VERSION _MSVC_LANG
+#elif defined(__cplusplus)
+#    define PM_CPP_VERSION __cplusplus
+#else
+#    define PM_CPP_VERSION 0
+#endif
+
+// UCRT 14.44.x.x: (doesn't require c++17)
+// UCRT 14.29.x.x: (requires c++17)
+// UCRT 14.16.x.x: (requires c++17)
+// UCRT 14.0.x.x: (doesn't have c++17 support)
+#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X _PM_CC_SUPPORTS_CXX17 && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 44)
+#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X PM_CPP_VERSION >= 201703L && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 29)
+#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X PM_CPP_VERSION >= 201703L && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 16)
+#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X 0
+
+// clang-format off
+#define PM_HAS_STD_BAD_VARIANT_ACCESS   _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X || \
+                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X || \
+                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X || \
+                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X
+// clang-format on
 
 #if PM_HAS_STD_BAD_VARIANT_ACCESS
+#    include <exception>
 #    include <variant>
+#else
+namespace std
+{
+class bad_variant_access : public exception
+{
+public:
+    bad_variant_access() noexcept = default;
+
+    const char *what() const noexcept override
+    {
+        return "bad variant access";
+    }
+};
+} // namespace std
 #endif
-#include <exception>
 
 // #include "../../variant/include/std-compat/internal/monostate_compat.h"
 
