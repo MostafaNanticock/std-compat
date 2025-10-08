@@ -26,6 +26,8 @@
 #define PM_HAS_STD_BAD_VARIANT_ACCESS_NOT_IN_VARIANT_HEADER _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X
 // clang-format on
 
+#define PM_HAS_STD_MONOSTATE_NOT_IN_VARIANT_HEADER PM_HAS_STD_BAD_VARIANT_ACCESS_NOT_IN_VARIANT_HEADER
+
 #if PM_HAS_STD_BAD_VARIANT_ACCESS_NOT_IN_VARIANT_HEADER
 #    include <exception>
 #else
@@ -44,14 +46,47 @@ public:
 } // namespace std
 #endif
 
+#if PM_HAS_STD_MONOSTATE_NOT_IN_VARIANT_HEADER
+#    include <xutility>
+#else
+namespace std
+{
+struct monostate
+{
+    friend constexpr bool operator==(monostate, monostate) noexcept
+    {
+        return true;
+    }
+    friend constexpr bool operator!=(monostate, monostate) noexcept
+    {
+        return false;
+    }
+    friend constexpr bool operator<(monostate, monostate) noexcept
+    {
+        return false;
+    }
+    friend constexpr bool operator>(monostate, monostate) noexcept
+    {
+        return false;
+    }
+    friend constexpr bool operator<=(monostate, monostate) noexcept
+    {
+        return true;
+    }
+    friend constexpr bool operator>=(monostate, monostate) noexcept
+    {
+        return true;
+    }
+};
+} // namespace std
+#endif
+
 // #include "../../variant/include/std-compat/internal/monostate_compat.h"
 
 bool test_variant()
 {
-    // #ifdef _PM_CC_SUPPORTS_CXX17
-    //     std::monostate ms1;
-    //     std::cout << &ms1 << std::endl;
-    // #endif
+    std::monostate ms1;
+    std::cout << &ms1 << std::endl;
 
     std::bad_variant_access bva;
     std::cout << &bva << std::endl;
