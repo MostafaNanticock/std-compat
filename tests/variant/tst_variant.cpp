@@ -52,10 +52,8 @@ bool test_variant()
     //     std::cout << &ms1 << std::endl;
     // #endif
 
-#ifdef PM_HAS_STD_BAD_VARIANT_ACCESS
     std::bad_variant_access bva;
     std::cout << &bva << std::endl;
-#endif
 
     return true;
 }
