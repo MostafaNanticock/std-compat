@@ -18,10 +18,10 @@
 #define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X 0
 
 // clang-format off
-#define PM_UCRT_HAS_STD_BAD_VARIANT_ACCESS   _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X || \
-                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X || \
-                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X || \
-                                        _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X
+#define PM_UCRT_HAS_STD_BAD_VARIANT_ACCESS  _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X || \
+                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X || \
+                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X || \
+                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X
 
 #define PM_HAS_STD_BAD_VARIANT_ACCESS_OUTSIDE_VARIANT_HEADER _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X
 // clang-format on

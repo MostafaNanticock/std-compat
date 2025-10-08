@@ -6,7 +6,20 @@ add_library(StdCompat_common INTERFACE)
 
 target_sources(StdCompat_common
     INTERFACE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/msvc_crt_version.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/detect_compiler.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/compiler_clang.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/compiler_gcc.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/compiler_msvc.h
+
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/detect_crt.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_apple.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_bionic.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_libcxx.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_libstdcxx.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_mingw.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_msvc.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_musl.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_newlib.h
 )
 
 target_include_directories(StdCompat_common

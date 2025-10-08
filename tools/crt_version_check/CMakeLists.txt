@@ -1,4 +1,4 @@
-add_executable(check_ucrt_version 
+add_executable(crt_version_check 
     crt_version_check.cpp
 )
 

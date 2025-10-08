@@ -12,7 +12,8 @@
 //   6. Ensure the matching runtime DLL (e.g. ucrtbase.dll) is available at runtime.
 //
 
-#include "crt_detect.h"
+// FIXME: Fix this relative path
+#include "../../src/common/include/std-compat/internal/detect_crt.h"
 
 #include <iostream>
 #include <string>

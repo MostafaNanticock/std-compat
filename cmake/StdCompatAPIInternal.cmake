@@ -92,7 +92,7 @@ function(_pm_check_crt_version)
     message(STATUS "Checking CRT version...")
 
     try_run(CRT_CHECK_RUN_RESULT CRT_CHECK_COMPILE_RESULT
-        ${CMAKE_CURRENT_BINARY_DIR}/crt_check
+        ${CMAKE_CURRENT_BINARY_DIR}/crt_version_check
         ${CMAKE_CURRENT_SOURCE_DIR}/tools/crt_version_check/crt_version_check.cpp
         COMPILE_OUTPUT_VARIABLE CRT_CHECK_COMPILE_OUTPUT
         RUN_OUTPUT_VARIABLE CRT_VERSION_OUTPUT
