@@ -182,7 +182,9 @@ bool test_variant()
         return false;
 
     std::monostate a, b;
-    if (a == b)
+    if (!(a == b))
+        return false;
+    if (a != b)
         return false;
 
     // 16. variant_size / variant_alternative
