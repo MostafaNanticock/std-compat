@@ -17,6 +17,14 @@
 #    define PM_COMPILER_VERSION_REVISION 0
 #endif
 
+#ifdef _MSVC_LANG
+#    define PM_CPP_VERSION _MSVC_LANG
+#elif defined(__cplusplus)
+#    define PM_CPP_VERSION __cplusplus
+#else
+#    define PM_CPP_VERSION 0
+#endif
+
 #include <string>
 
 namespace PM
