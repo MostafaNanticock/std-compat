@@ -229,7 +229,7 @@ bool test_variant()
     if (!(v7 == std::variant<std::monostate, int>(std::monostate{})))
         return false;
 
-    PM::detail::Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
+    nonstd::detail::Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
     Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
 
     std::monostate a, b;
