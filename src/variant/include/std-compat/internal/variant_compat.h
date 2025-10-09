@@ -28,30 +28,33 @@ public:
 #    include <xutility>
 
 #    ifdef PM_CC_MSVC
-constexpr bool operator==(std::monostate, std::monostate) noexcept
+namespace std
+{
+constexpr bool operator==(monostate, monostate) noexcept
 {
     return true;
 }
-constexpr bool operator!=(std::monostate, std::monostate) noexcept
+constexpr bool operator!=(monostate, monostate) noexcept
 {
     return false;
 }
-constexpr bool operator<(std::monostate, std::monostate) noexcept
+constexpr bool operator<(monostate, monostate) noexcept
 {
     return false;
 }
-constexpr bool operator>(std::monostate, std::monostate) noexcept
+constexpr bool operator>(monostate, monostate) noexcept
 {
     return false;
 }
-constexpr bool operator<=(std::monostate, std::monostate) noexcept
+constexpr bool operator<=(monostate, monostate) noexcept
 {
     return true;
 }
-constexpr bool operator>=(std::monostate, std::monostate) noexcept
+constexpr bool operator>=(monostate, monostate) noexcept
 {
     return true;
 }
+} // namespace std
 #    endif
 #else
 namespace std
