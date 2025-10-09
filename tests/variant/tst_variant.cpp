@@ -67,7 +67,7 @@ constexpr bool operator==(const std::variant<_Types...> &_Left, const std::varia
 
 using monostate_int_variant = std::variant<std::monostate, int>;
 
-template<typename T>
+template <typename T>
 struct Comparator
 {
     static bool equal(T const &v, T const &w)
@@ -112,6 +112,23 @@ struct Comparator
         }
     }
 };
+
+namespace PM
+{
+struct A
+{
+};
+
+constexpr bool operator==(A, A)
+{
+    return true;
+}
+
+constexpr bool operator!=(A, A)
+{
+    return false;
+}
+} // namespace PM
 
 bool test_variant()
 {
@@ -227,6 +244,12 @@ bool test_variant()
     if (!std::holds_alternative<std::monostate>(v7))
         return false;
     if (!(v7 == std::variant<std::monostate, int>(std::monostate{})))
+        return false;
+
+    std::variant<PM::A, int> v7_;
+    if (!std::holds_alternative<PM::A>(v7_))
+        return false;
+    if (!(v7_ == std::variant<PM::A, int>(PM::A{})))
         return false;
 
     nonstd::detail::Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
