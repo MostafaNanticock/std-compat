@@ -65,6 +65,54 @@ constexpr bool operator==(const std::variant<_Types...> &_Left, const std::varia
 } // namespace PM
 #endif
 
+using monostate_int_variant = std::variant<std::monostate, int>;
+
+template<typename T>
+struct Comparator
+{
+    static bool equal(T const &v, T const &w)
+    {
+        switch (v.index())
+        {
+        case 0:
+            return std::get<0>(v) == std::get<0>(w);
+        case 1:
+            return std::get<1>(v) == std::get<1>(w);
+        case 2:
+            return std::get<2>(v) == std::get<2>(w);
+        case 3:
+            return std::get<3>(v) == std::get<3>(w);
+        case 4:
+            return std::get<4>(v) == std::get<4>(w);
+        case 5:
+            return std::get<5>(v) == std::get<5>(w);
+        case 6:
+            return std::get<6>(v) == std::get<6>(w);
+        case 7:
+            return std::get<7>(v) == std::get<7>(w);
+        case 8:
+            return std::get<8>(v) == std::get<8>(w);
+        case 9:
+            return std::get<9>(v) == std::get<9>(w);
+        case 10:
+            return std::get<10>(v) == std::get<10>(w);
+        case 11:
+            return std::get<11>(v) == std::get<11>(w);
+        case 12:
+            return std::get<12>(v) == std::get<12>(w);
+        case 13:
+            return std::get<13>(v) == std::get<13>(w);
+        case 14:
+            return std::get<14>(v) == std::get<14>(w);
+        case 15:
+            return std::get<15>(v) == std::get<15>(w);
+
+        default:
+            return false;
+        }
+    }
+};
+
 bool test_variant()
 {
     // 1. Constructors
@@ -180,6 +228,9 @@ bool test_variant()
         return false;
     if (!(v7 == std::variant<std::monostate, int>(std::monostate{})))
         return false;
+
+    PM::detail::Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
+    Comparator<monostate_int_variant>::equal(v7, monostate_int_variant(std::monostate{}));
 
     std::monostate a, b;
     if (!(a == b))

@@ -118,6 +118,19 @@
 
 #include <utility>
 
+namespace PM
+{
+namespace detail {
+
+    template< class Variant >
+    struct Comparator
+    {
+        static bool equal( Variant const & v, Variant const & w );
+        static bool less_than( Variant const & v, Variant const & w );
+    };
+} //namespace detail
+}
+
 namespace nonstd {
 
 using std::in_place;
@@ -2451,64 +2464,6 @@ inline variant_constexpr R visit(const Visitor& v, V1 const& arg1, V2 const& arg
 
 // 19.7.6 Relational operators
 
-namespace detail {
-
-template< class Variant >
-struct Comparator
-{
-    static inline bool equal( Variant const & v, Variant const & w )
-    {
-        switch( v.index() )
-        {
-            case 0: return get<0>( v ) == get<0>( w );
-            case 1: return get<1>( v ) == get<1>( w );
-            case 2: return get<2>( v ) == get<2>( w );
-            case 3: return get<3>( v ) == get<3>( w );
-            case 4: return get<4>( v ) == get<4>( w );
-            case 5: return get<5>( v ) == get<5>( w );
-            case 6: return get<6>( v ) == get<6>( w );
-            case 7: return get<7>( v ) == get<7>( w );
-            case 8: return get<8>( v ) == get<8>( w );
-            case 9: return get<9>( v ) == get<9>( w );
-            case 10: return get<10>( v ) == get<10>( w );
-            case 11: return get<11>( v ) == get<11>( w );
-            case 12: return get<12>( v ) == get<12>( w );
-            case 13: return get<13>( v ) == get<13>( w );
-            case 14: return get<14>( v ) == get<14>( w );
-            case 15: return get<15>( v ) == get<15>( w );
-            
-            default: return false;
-        }
-    }
-
-    static inline bool less_than( Variant const & v, Variant const & w )
-    {
-        switch( v.index() )
-        {
-            case 0: return get<0>( v ) < get<0>( w );
-            case 1: return get<1>( v ) < get<1>( w );
-            case 2: return get<2>( v ) < get<2>( w );
-            case 3: return get<3>( v ) < get<3>( w );
-            case 4: return get<4>( v ) < get<4>( w );
-            case 5: return get<5>( v ) < get<5>( w );
-            case 6: return get<6>( v ) < get<6>( w );
-            case 7: return get<7>( v ) < get<7>( w );
-            case 8: return get<8>( v ) < get<8>( w );
-            case 9: return get<9>( v ) < get<9>( w );
-            case 10: return get<10>( v ) < get<10>( w );
-            case 11: return get<11>( v ) < get<11>( w );
-            case 12: return get<12>( v ) < get<12>( w );
-            case 13: return get<13>( v ) < get<13>( w );
-            case 14: return get<14>( v ) < get<14>( w );
-            case 15: return get<15>( v ) < get<15>( w );
-            
-            default: return false;
-        }
-    }
-};
-
-} //namespace detail
-
 template< class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15 >
 inline variant_constexpr14 bool operator==(
     variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> const & v,
@@ -2516,7 +2471,7 @@ inline variant_constexpr14 bool operator==(
 {
     if      ( v.index() != w.index()     ) return false;
     else if ( v.valueless_by_exception() ) return true;
-    else                                   return detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >::equal( v, w );
+    else                                   return PM::detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >::equal( v, w );
 }
 
 template< class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15 >
@@ -2536,7 +2491,7 @@ inline variant_constexpr14 bool operator<(
     else if ( v.valueless_by_exception() ) return true;
     else if ( v.index() < w.index()      ) return true;
     else if ( v.index() > w.index()      ) return false;
-    else                                   return detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >::less_than( v, w );
+    else                                   return PM::detail::Comparator< variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> >::less_than( v, w );
 }
 
 template< class T0, class T1, class T2, class T3, class T4, class T5, class T6, class T7, class T8, class T9, class T10, class T11, class T12, class T13, class T14, class T15 >
@@ -2628,5 +2583,66 @@ struct hash< nonstd::variant<T0, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T
 #endif
 
 #endif // variant_USES_STD_VARIANT
+
+namespace PM
+{
+namespace detail {
+    template<class Variant>
+    inline bool Comparator<Variant>::equal(const Variant &v, const Variant &w)
+    {
+        using namespace nonstd;
+
+        switch( v.index() )
+        {
+        case 0: return get<0>( v ) == get<0>( w );
+        case 1: return get<1>( v ) == get<1>( w );
+        case 2: return get<2>( v ) == get<2>( w );
+        case 3: return get<3>( v ) == get<3>( w );
+        case 4: return get<4>( v ) == get<4>( w );
+        case 5: return get<5>( v ) == get<5>( w );
+        case 6: return get<6>( v ) == get<6>( w );
+        case 7: return get<7>( v ) == get<7>( w );
+        case 8: return get<8>( v ) == get<8>( w );
+        case 9: return get<9>( v ) == get<9>( w );
+        case 10: return get<10>( v ) == get<10>( w );
+        case 11: return get<11>( v ) == get<11>( w );
+        case 12: return get<12>( v ) == get<12>( w );
+        case 13: return get<13>( v ) == get<13>( w );
+        case 14: return get<14>( v ) == get<14>( w );
+        case 15: return get<15>( v ) == get<15>( w );
+
+        default: return false;
+        }
+    }
+
+    template<class Variant>
+    inline bool Comparator<Variant>::less_than(const Variant &v, const Variant &w)
+    {
+        using namespace nonstd;
+
+        switch( v.index() )
+        {
+        case 0: return get<0>( v ) < get<0>( w );
+        case 1: return get<1>( v ) < get<1>( w );
+        case 2: return get<2>( v ) < get<2>( w );
+        case 3: return get<3>( v ) < get<3>( w );
+        case 4: return get<4>( v ) < get<4>( w );
+        case 5: return get<5>( v ) < get<5>( w );
+        case 6: return get<6>( v ) < get<6>( w );
+        case 7: return get<7>( v ) < get<7>( w );
+        case 8: return get<8>( v ) < get<8>( w );
+        case 9: return get<9>( v ) < get<9>( w );
+        case 10: return get<10>( v ) < get<10>( w );
+        case 11: return get<11>( v ) < get<11>( w );
+        case 12: return get<12>( v ) < get<12>( w );
+        case 13: return get<13>( v ) < get<13>( w );
+        case 14: return get<14>( v ) < get<14>( w );
+        case 15: return get<15>( v ) < get<15>( w );
+
+        default: return false;
+        }
+    }
+} //namespace detail
+}
 
 #endif // NONSTD_VARIANT_LITE_HPP
