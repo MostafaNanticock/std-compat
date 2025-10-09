@@ -24,8 +24,9 @@ std::cout << "=== Testing " << #TestFunctionName << " ===" << std::endl;        
     }
 
 #define PM_PRINT_COMPILE_INFO                                                                   \
-    std::cout << "MSVC version: " << PM::internal::compilerVersionString() << std::endl;            \
-    std::cout << "UCRT version: " << PM::internal::crtVersionString() << std::endl;
+    std::cout << "MSVC version: " << PM::internal::compilerVersionString() << std::endl;        \
+    std::cout << "UCRT version: " << PM::internal::crtVersionString() << std::endl;             \
+    std::cout << "C++" << PM_CPP_VERSION << std::endl;
 // clang-format on
 
 #endif

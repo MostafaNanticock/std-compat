@@ -1,97 +1,200 @@
 #include <testing.h>
 
-#if defined(_MSVC_LANG)
-#    define PM_CPP_VERSION _MSVC_LANG
-#elif defined(__cplusplus)
-#    define PM_CPP_VERSION __cplusplus
-#else
-#    define PM_CPP_VERSION 0
-#endif
+#include <variant>
 
-// UCRT 14.44.x.x: doesn't require c++17
-// UCRT 14.29.x.x: requires c++17 (defined in <variant>)
-// UCRT 14.16.x.x: requires c++17 (defined in <variant>)
-// UCRT 14.00.x.x: doesn't have c++17 support
-#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X _PM_CC_SUPPORTS_CXX17 && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 44)
-#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X PM_CPP_VERSION >= 201703L && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 29)
-#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X PM_CPP_VERSION >= 201703L && (PM_CRT_VERSION_MAJOR == 14) && (PM_CRT_VERSION_MINOR >= 16)
-#define _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X 0
+// constexpr bool operator==(std::monostate, std::monostate) noexcept
+// {
+//     return true;
+// }
 
-// clang-format off
-#define PM_UCRT_HAS_STD_BAD_VARIANT_ACCESS  _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X || \
-                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X || \
-                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_16_X_X || \
-                                            _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_00_X_X
+// constexpr bool operator!=(std::monostate, std::monostate) noexcept
+// {
+//     return true;
+// }
 
-#define PM_HAS_STD_BAD_VARIANT_ACCESS_OUTSIDE_VARIANT_HEADER _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_44_X_X
-// clang-format on
-
-// UCRT 14.44.x.x: requires c++17 (defined in <variant>)
-// UCRT 14.29.x.x: requires c++17 (defined in <xutility>)
-// UCRT 14.16.x.x: requires c++17 (defined in <variant>)
-// UCRT 14.00.x.x: doesn't have c++17 support
-#define PM_HAS_STD_MONOSTATE_OUTSIDE_VARIANT_HEADER _PM_HAS_STD_BAD_VARIANT_ACCESS_UCRT_14_29_X_X
-
-#if PM_HAS_STD_BAD_VARIANT_ACCESS_OUTSIDE_VARIANT_HEADER
-#    include <exception>
-#else
-namespace std
+#ifdef PM_STD_VARIANT
+namespace PM
 {
-class bad_variant_access : public exception
+template <class _Storage, class _Fn>
+constexpr std::_Variant_raw_visit_t<_Fn, _Storage> _Variant_raw_visit(size_t _Idx, _Storage &&_Obj,
+                                                                      _Fn &&_Func) noexcept(std::_Variant_raw_visit_dispatch<_Fn, _Storage>)
 {
-public:
-    bad_variant_access() noexcept = default;
+    // Call _Func with _Storage if _Idx is variant_npos, and otherwise the _Idx-th element in _Storage.
+    // pre: _Idx + 1 <= remove_reference_t<_Storage>::_Size
+    constexpr size_t _Size = std::remove_reference_t<_Storage>::_Size;
+    constexpr int _Strategy = _Size <= 4 ? 1 : _Size <= 16 ? 2 : _Size <= 64 ? 3 : _Size <= 256 ? 4 : -1;
+    ++_Idx; // bias index by +1 to map {variant_npos} U [0, _Size) to the contiguous range [0, _Size]
+    return std::_Variant_raw_visit1<_Strategy>::_Visit(_Idx, static_cast<_Fn &&>(_Func), static_cast<_Storage &&>(_Obj));
+}
 
-    const char *what() const noexcept override
+template <class _Ty, size_t _Tag>
+struct _Tagged
+{ // aggregate a runtime value and a compile-time tag value
+    static constexpr size_t _Idx = _Tag;
+    _Ty _Val;
+};
+
+template <class _Op, class _Result, class... _Types>
+struct _Variant_relop_visitor2
+{ // evaluate _Op with the contained value of two variants that hold the same alternative
+    const std::_Variant_storage<_Types...> &_Left;
+
+    template <class _Ty, size_t _Idx>
+    constexpr _Result operator()(PM::_Tagged<const _Ty &, _Idx> _Right) const noexcept(
+        std::disjunction_v<std::bool_constant<_Idx == std::variant_npos>, std::is_nothrow_invocable_r<_Result, _Op, const _Ty &, const _Ty &>>)
     {
-        return "bad variant access";
+        // determine the relationship between the stored values of _Left and _Right
+        // pre: _Left.index() == _Idx && _Right.index() == _Idx
+        if constexpr (_Idx != std::variant_npos)
+            return _Op{}(std::_Variant_raw_get<_Idx>(_Left), _Right._Val);
+        else
+            // return whatever _Op returns for equal values
+            return _Op{}(0, 0);
     }
 };
-} // namespace std
-#endif
 
-#if PM_HAS_STD_MONOSTATE_OUTSIDE_VARIANT_HEADER
-#    include <xutility>
-#else
-namespace std
+template <class... _Types>
+constexpr bool operator==(const std::variant<_Types...> &_Left, const std::variant<_Types...> &_Right) noexcept(
+    std::conjunction_v<std::is_nothrow_invocable_r<bool, std::equal_to<>, const _Types &, const _Types &>...>) /* strengthened */
 {
-struct monostate
-{
-    friend constexpr bool operator==(monostate, monostate) noexcept
-    {
-        return true;
-    }
-    friend constexpr bool operator!=(monostate, monostate) noexcept
-    {
-        return false;
-    }
-    friend constexpr bool operator<(monostate, monostate) noexcept
-    {
-        return false;
-    }
-    friend constexpr bool operator>(monostate, monostate) noexcept
-    {
-        return false;
-    }
-    friend constexpr bool operator<=(monostate, monostate) noexcept
-    {
-        return true;
-    }
-    friend constexpr bool operator>=(monostate, monostate) noexcept
-    {
-        return true;
-    }
-};
-} // namespace std
+    // determine if the arguments are both valueless or contain equal values
+    using _Visitor = PM::_Variant_relop_visitor2<std::equal_to<>, bool, _Types...>;
+    const size_t _Right_index = _Right.index();
+    return _Left.index() == _Right_index && PM::_Variant_raw_visit(_Right_index, _Right._Storage(), _Visitor{_Left._Storage()});
+}
+} // namespace PM
 #endif
 
 bool test_variant()
 {
-    std::monostate ms1;
-    std::cout << &ms1 << std::endl;
+    // 1. Constructors
+    std::variant<int, std::string> v1; // default constructs first alternative
+    if (!std::holds_alternative<int>(v1) || v1.index() != 0)
+        return false;
+    if (std::get<int>(v1) != 0)
+        return false;
 
-    std::bad_variant_access bva;
-    std::cout << &bva << std::endl;
+    std::variant<int, std::string> v2(42);
+    if (!std::holds_alternative<int>(v2) || std::get<int>(v2) != 42)
+        return false;
+
+    std::variant<int, std::string> v3(std::string("hello"));
+    if (!std::holds_alternative<std::string>(v3) || std::get<std::string>(v3) != "hello")
+        return false;
+
+    // 2. Copy constructor
+    std::variant<int, std::string> v4(v2);
+    if (!std::holds_alternative<int>(v4) || std::get<int>(v4) != 42)
+        return false;
+
+    // 3. Move constructor
+    std::variant<int, std::string> v5(std::move(v4));
+    if (!std::holds_alternative<int>(v5) || std::get<int>(v5) != 42)
+        return false;
+
+    // 4. Copy assignment
+    v5 = v3;
+    if (!std::holds_alternative<std::string>(v5) || std::get<std::string>(v5) != "hello")
+        return false;
+
+    // 5. Move assignment
+    v5 = std::variant<int, std::string>(99);
+    if (!std::holds_alternative<int>(v5) || std::get<int>(v5) != 99)
+        return false;
+
+    // 6. Observers: index, valueless_by_exception
+    if (v5.index() != 0)
+        return false;
+    if (v5.valueless_by_exception())
+        return false;
+
+    // 7. Modifiers: emplace
+    v5.emplace<std::string>("world");
+    if (!std::holds_alternative<std::string>(v5) || std::get<std::string>(v5) != "world")
+        return false;
+
+    // 8. swap (member)
+    std::variant<int, std::string> v6(123);
+    v5.swap(v6);
+    if (!std::holds_alternative<int>(v5) || std::get<int>(v5) != 123)
+        return false;
+    if (!std::holds_alternative<std::string>(v6) || std::get<std::string>(v6) != "world")
+        return false;
+
+    // 9. swap (non-member)
+    std::swap(v5, v6);
+    if (!std::holds_alternative<std::string>(v5) || std::get<std::string>(v5) != "world")
+        return false;
+    if (!std::holds_alternative<int>(v6) || std::get<int>(v6) != 123)
+        return false;
+
+    // 10. Non-member visit
+    bool visited = false;
+    std::visit(
+        [&](std::variant<int, std::string> &&arg)
+        {
+            visited = true;
+            PM_UNUSED(arg);
+        },
+        v5);
+    if (!visited)
+        return false;
+
+    // 11. get / get_if by type
+    if (*std::get_if<std::string>(&v5) != "world")
+        return false;
+    if (std::get_if<int>(&v5) != nullptr)
+        return false;
+
+    // 12. get / get_if by index
+    if (*std::get_if<1>(&v5) != "world")
+        return false;
+    if (std::get_if<0>(&v5) != nullptr)
+        return false;
+
+    // 13. holds_alternative
+    if (!std::holds_alternative<std::string>(v5))
+        return false;
+    if (std::holds_alternative<int>(v5))
+        return false;
+
+    // 14. bad_variant_access
+    {
+        bool threw = false;
+        try
+        {
+            PM_UNUSED(std::get<int>(v5)); // wrong type
+        }
+        catch (const std::bad_variant_access &)
+        {
+            threw = true;
+        }
+
+        if (!threw)
+            return false;
+    }
+
+    // // 15. monostate
+    std::variant<std::monostate, int> v7;
+    if (!std::holds_alternative<std::monostate>(v7))
+        return false;
+    if (!(v7 == std::variant<std::monostate, int>(std::monostate{})))
+        return false;
+
+    std::monostate a, b;
+    if (a == b)
+        return false;
+
+    // 16. variant_size / variant_alternative
+    if (std::variant_size<decltype(v1)>::value != 2)
+        return false;
+    typedef std::variant_alternative<0, decltype(v1)>::type first_type;
+    if (!std::is_same<first_type, int>::value)
+        return false;
+
+    // 17. variant_npos
+    if (std::variant_npos != static_cast<std::size_t>(-1))
+        return false;
 
     return true;
 }

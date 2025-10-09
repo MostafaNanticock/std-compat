@@ -26,6 +26,33 @@ public:
 
 #if PM_HAS_STD_MONOSTATE_OUTSIDE_VARIANT_HEADER
 #    include <xutility>
+
+#    ifdef PM_CC_MSVC
+constexpr bool operator==(std::monostate, std::monostate) noexcept
+{
+    return true;
+}
+constexpr bool operator!=(std::monostate, std::monostate) noexcept
+{
+    return false;
+}
+constexpr bool operator<(std::monostate, std::monostate) noexcept
+{
+    return false;
+}
+constexpr bool operator>(std::monostate, std::monostate) noexcept
+{
+    return false;
+}
+constexpr bool operator<=(std::monostate, std::monostate) noexcept
+{
+    return true;
+}
+constexpr bool operator>=(std::monostate, std::monostate) noexcept
+{
+    return true;
+}
+#    endif
 #else
 namespace std
 {
@@ -57,4 +84,5 @@ struct monostate
     }
 };
 } // namespace std
+
 #endif

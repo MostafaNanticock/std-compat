@@ -9,7 +9,6 @@ target_sources(StdCompat_variant
 INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
     ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/monostate_compat.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat_msvc.h
 )
@@ -30,6 +29,7 @@ _pm_add_supported_cxx_standards_definitions(StdCompat_variant)
 target_compile_definitions(StdCompat_variant
     INTERFACE
         variant_CONFIG_SELECT_VARIANT=1
+        variant_CONFIG_OVERRIDE_MONOSTATE=std::monostate # FIXME: for development purposes
         PM_CRT_VERSION_MAJOR=${PM_CRT_VERSION_MAJOR}
         PM_CRT_VERSION_MINOR=${PM_CRT_VERSION_MINOR}
         PM_CRT_VERSION_BUILD=${PM_CRT_VERSION_BUILD}
