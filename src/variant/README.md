@@ -25,3 +25,14 @@
 | 14.29.x.x      | 17                    | `<xutility>`     |
 | 14.16.x.x      | 17                    | `<variant>`      |
 | 14.00.x.x      | —                     | —                |
+
+> **Caveat:** For some unknown reason UCRT versions heigher than 14.29 with C++17 causes the compiler to be unable to find the == operator for `std::monostate` class</br>
+> specifically for such code
+> ```cpp
+> std::variant<std::monostate, int> variant1;
+> // The compiler fails to find the appropriate declaration of 
+> // `bool operatror==(std::monostate, std::monostate)`
+> // When UCRT_VERSION >= 14.29 && CPP_VERSION == (C++17)
+> variant1 == std::variant<std::monostate, int>(std::monostate{});
+> ```
+> This doesn't happen with any C++ version otherthan C++17
