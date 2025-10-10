@@ -1,9 +1,9 @@
 version: 1.0.{build}
 
 environment:
-  matrix:
-    !include .appveyor/msvc/matrix.yml
-    # !include .appveyor/mingw/matrix.yml
+  matrix: !include
+    - .appveyor/msvc/matrix.yml
+    - .appveyor/mingw/matrix.yml
 
 build_script:
   - ps: |
