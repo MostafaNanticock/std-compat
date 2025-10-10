@@ -3,6 +3,7 @@ version: 1.0.{build}
 # One job per compiler image
 environment:
   matrix:
+    # MSVC
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
       GENERATOR: "Visual Studio 14 2015"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
@@ -11,6 +12,32 @@ environment:
       GENERATOR: "Visual Studio 16 2019"
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
       GENERATOR: "Visual Studio 17 2022"
+
+    # MinGW (classic, GCC 5.3.0, 32-bit only)
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "MinGW Makefiles"
+      MINGW_PATH: "C:\\MinGW\\bin"
+      ARCH: x86
+
+    # MinGW-w64 7.3.0
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "MinGW Makefiles"
+      MINGW_PATH: "C:\\mingw-w64\\i686-7.3.0-posix-dwarf-rt_v5-rev0\\mingw32\\bin"
+      ARCH: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "MinGW Makefiles"
+      MINGW_PATH: "C:\\mingw-w64\\x86_64-7.3.0-posix-seh-rt_v5-rev0\\mingw64\\bin"
+      ARCH: x64
+
+    # MinGW-w64 8.1.0
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "MinGW Makefiles"
+      MINGW_PATH: "C:\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin"
+      ARCH: x86
+    - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: "MinGW Makefiles"
+      MINGW_PATH: "C:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin"
+      ARCH: x64
 
 build_script:
   - ps: |
