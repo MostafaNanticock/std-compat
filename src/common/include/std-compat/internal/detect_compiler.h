@@ -25,6 +25,8 @@
 #    define PM_CPP_VERSION 0
 #endif
 
+#include "crt_patches/patches.h"
+
 #include <string>
 
 namespace PM

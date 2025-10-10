@@ -35,3 +35,7 @@
 #ifndef PM_CRT_NAME
 #    define PM_CRT_NAME "Apple CRT (libSystem)"
 #endif
+
+#ifndef PM_CRT_APPLE
+#    define PM_CRT_APPLE ((PM_CRT_VERSION_MAJOR * 1000000) + (PM_CRT_VERSION_MINOR * 10000) + (PM_CRT_VERSION_BUILD * 100) + PM_CRT_VERSION_REVISION)
+#endif

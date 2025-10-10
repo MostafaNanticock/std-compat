@@ -20,6 +20,8 @@
 #    error "Unsupported compiler or CRT"
 #endif
 
+#include "crt_patches/patches.h"
+
 #include <string>
 
 namespace PM

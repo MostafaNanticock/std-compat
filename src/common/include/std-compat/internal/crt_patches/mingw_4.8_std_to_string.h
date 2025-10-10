@@ -1,3 +1,5 @@
+#pragma once
+
 #include <sstream>
 
 #ifdef __MINGW32_MAJOR_VERSION // Classic MinGW CRT (32-bit) is always affected

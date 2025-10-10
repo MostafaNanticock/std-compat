@@ -31,3 +31,7 @@
 #ifndef PM_CRT_NAME
 #    define PM_CRT_NAME "Android Bionic libc"
 #endif
+
+#ifndef PM_CRT_BIONIC
+#    define PM_CRT_BIONIC ((PM_CRT_VERSION_MAJOR * 1000000) + (PM_CRT_VERSION_MINOR * 10000) + (PM_CRT_VERSION_BUILD * 100) + PM_CRT_VERSION_REVISION)
+#endif

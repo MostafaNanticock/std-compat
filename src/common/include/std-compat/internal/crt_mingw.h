@@ -63,7 +63,6 @@
 #    endif
 #endif
 
-//
-// WORKAROUND for the 4.8 bug with non-existing std::to_string() implementation
-//
-#include "mingw/4.8_std_to_string.h"
+#ifndef PM_CRT_MINGW
+#    define PM_CRT_MINGW ((PM_CRT_VERSION_MAJOR * 1000000) + (PM_CRT_VERSION_MINOR * 10000) + (PM_CRT_VERSION_BUILD * 100) + PM_CRT_VERSION_REVISION)
+#endif
