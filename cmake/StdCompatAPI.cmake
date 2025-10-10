@@ -4,6 +4,74 @@ _pm_detect_cxx_standards()
 _pm_check_crt_version()
 
 # Usage:
+#   std_compat_add_module(TARGET_NAME
+#       <SOURCES...>
+#       <DEPENDS...>
+#       <INCLUDE_DIRS...>
+#       <COMPILE_DEFINITIONS...>
+#   )
+function(std_compat_add_module TARGET_NAME)
+    set(options)
+    set(oneValueArgs)
+    set(multiValueArgs
+        INCLUDE_DIRS
+        SOURCES
+        DEPENDS
+        COMPILE_DEFINITIONS
+    )
+    cmake_parse_arguments(STDCOMPAT
+        "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+
+    # Create the interface library
+    add_library(${TARGET_NAME} INTERFACE)
+    add_library(StdCompat::${TARGET_NAME} ALIAS ${TARGET_NAME})
+
+    # Sources
+    if(STDCOMPAT_SOURCES)
+        target_sources(${TARGET_NAME}
+            INTERFACE
+                ${STDCOMPAT_SOURCES}
+        )
+    endif()
+
+    # Dependencies
+    if(STDCOMPAT_DEPENDS)
+        target_link_libraries(${TARGET_NAME}
+            INTERFACE
+                ${STDCOMPAT_DEPENDS}
+        )
+    endif()
+
+    # Include directories
+    set(STD_COMPAT_DEFAULT_INCLUDE_DIRS
+        ${CMAKE_CURRENT_LIST_DIR}/include
+    )
+    target_include_directories(${TARGET_NAME}
+        INTERFACE
+            $<BUILD_INTERFACE:${STD_COMPAT_DEFAULT_INCLUDE_DIRS}>
+    )
+
+    if(STDCOMPAT_INCLUDE_DIRS)
+        target_include_directories(${TARGET_NAME}
+            INTERFACE
+                $<BUILD_INTERFACE:${STDCOMPAT_INCLUDE_DIRS}>
+        )
+    endif()
+
+    # Add supported C++ standard definitions
+    _pm_add_supported_cxx_standards_definitions(${TARGET_NAME})
+
+    # Compile definitions
+    if(STDCOMPAT_COMPILE_DEFINITIONS)
+        target_compile_definitions(${TARGET_NAME}
+            INTERFACE
+                ${STDCOMPAT_COMPILE_DEFINITIONS}
+        )
+    endif()
+endfunction()
+
+
+# Usage:
 #   std_compat_add_test(
 #       <BASE_NAME>
 #       <DEPENDS>

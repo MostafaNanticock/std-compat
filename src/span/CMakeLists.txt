@@ -1,28 +1,11 @@
-set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+std_compat_add_module(span
+    SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/span
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/span.hpp
 
-add_library(StdCompat_span INTERFACE)
-add_library(StdCompat::span ALIAS StdCompat_span)
+    DEPENDS
+        StdCompat::common
 
-target_sources(StdCompat_span
-INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/span
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/span.hpp
-)
-
-target_link_libraries(StdCompat_span
-INTERFACE
-    StdCompat_common
-)
-
-# Add include directories to consumers, BEFORE system includes
-target_include_directories(StdCompat_span
-    INTERFACE
-        $<BUILD_INTERFACE:${INCLUDE_DIRS}>
-)
-
-target_compile_definitions(StdCompat_span
-    INTERFACE
+    COMPILE_DEFINITIONS
         span_CONFIG_SELECT_SPAN=1
 )

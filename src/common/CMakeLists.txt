@@ -1,11 +1,5 @@
-set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
-
-add_library(StdCompat_common INTERFACE)
-
-target_sources(StdCompat_common
-    INTERFACE
+std_compat_add_module(common
+    SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/detect_compiler.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/compiler_clang.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/compiler_gcc.h
@@ -20,9 +14,4 @@ target_sources(StdCompat_common
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_msvc.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_musl.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_newlib.h
-)
-
-target_include_directories(StdCompat_common
-    INTERFACE
-        $<BUILD_INTERFACE:${INCLUDE_DIRS}>
 )

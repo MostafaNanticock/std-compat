@@ -1,37 +1,14 @@
-set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+std_compat_add_module(variant
+    SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat_msvc.h
 
-add_library(StdCompat_variant INTERFACE)
-add_library(StdCompat::variant ALIAS StdCompat_variant)
+    DEPENDS
+        StdCompat::common
 
-target_sources(StdCompat_variant
-INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant_compat_msvc.h
-)
-
-target_link_libraries(StdCompat_variant
-INTERFACE
-    StdCompat_common
-)
-
-# Add include directories to consumers, BEFORE system includes
-target_include_directories(StdCompat_variant
-    INTERFACE
-        $<BUILD_INTERFACE:${INCLUDE_DIRS}>
-)
-
-_pm_add_supported_cxx_standards_definitions(StdCompat_variant)
-
-target_compile_definitions(StdCompat_variant
-    INTERFACE
+    COMPILE_DEFINITIONS
         variant_CONFIG_SELECT_VARIANT=1
         variant_CONFIG_OVERRIDE_MONOSTATE=std::monostate # FIXME: for development purposes
-        PM_CRT_VERSION_MAJOR=${PM_CRT_VERSION_MAJOR}
-        PM_CRT_VERSION_MINOR=${PM_CRT_VERSION_MINOR}
-        PM_CRT_VERSION_BUILD=${PM_CRT_VERSION_BUILD}
-        PM_CRT_VERSION_REVISION=${PM_CRT_VERSION_REVISION}
 )
