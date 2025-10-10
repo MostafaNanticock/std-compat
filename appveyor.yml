@@ -2,7 +2,7 @@ version: 1.0.{build}
 
 # Include compiler-specific matrices
 # Comment out any include to disable that compiler family
-include: .appveyor/msvc/matrix.yml
+- include: .appveyor/msvc/matrix.yml
 # - include: .appveyor/mingw/matrix.yml
 
 # Shared build dispatcher
