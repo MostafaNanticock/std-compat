@@ -62,3 +62,8 @@
 #        define PM_CRT_NAME "Unknown MinGW CRT"
 #    endif
 #endif
+
+//
+// WORKAROUND for the 4.8 bug with non-existing std::to_string() implementation
+//
+#include "mingw/4.8_std_to_string.h"
