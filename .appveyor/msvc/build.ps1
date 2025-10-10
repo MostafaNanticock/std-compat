@@ -1,5 +1,5 @@
 function Build-And-Test($Generator, $Arch, $Dir) {
-    Write-Host "=== Building $Arch with $Generator ==="
+    Write-Output "=== Building $Arch with $Generator ==="
     cmake -S . -B $Dir -G "$Generator" -A $Arch
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

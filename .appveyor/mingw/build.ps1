@@ -1,21 +1,21 @@
-# Simply add MinGW to PATH and let CMake auto-detect everything
+# Add MinGW to PATH
 $env:PATH = "$env:MINGW_PATH;$env:PATH"
 
 function Show-MinGW-Info {
-    Write-Host "=== MinGW Build Environment ===" -ForegroundColor Cyan
-    Write-Host "MinGW Path: $env:MINGW_PATH" -ForegroundColor Yellow
-    if ($env:MINGW_VERSION) { Write-Host "MinGW Version: $env:MINGW_VERSION" -ForegroundColor Yellow }
-    if ($env:ARCHITECTURE) { Write-Host "Architecture: $env:ARCHITECTURE" -ForegroundColor Yellow }
-    Write-Host "AppVeyor Image: $env:APPVEYOR_BUILD_WORKER_IMAGE" -ForegroundColor Yellow
+    Write-Output "=== MinGW Build Environment ==="
+    Write-Output "MinGW Path: $env:MINGW_PATH"
+    if ($env:MINGW_VERSION) { Write-Output "MinGW Version: $env:MINGW_VERSION" }
+    if ($env:ARCHITECTURE) { Write-Output "Architecture: $env:ARCHITECTURE" }
+    Write-Output "AppVeyor Image: $env:APPVEYOR_BUILD_WORKER_IMAGE"
     
     # Show compiler info
     try {
         $gccVersion = & gcc --version 2>&1 | Select-Object -First 1
-        Write-Host "GCC: $gccVersion" -ForegroundColor Green
+        Write-Output "GCC: $gccVersion"
     } catch {
-        Write-Host "GCC not found" -ForegroundColor Red
+        Write-Output "GCC not found"
     }
-    Write-Host "=================================" -ForegroundColor Cyan
+    Write-Output "================================="
 }
 
 function Build-And-Test($Generator, $Dir) {
@@ -28,10 +28,10 @@ function Build-And-Test($Generator, $Dir) {
     } elseif (Get-Command "make.exe" -ErrorAction SilentlyContinue) {
         $makeProgram = (Get-Command "make.exe").Source
         $Generator = "Unix Makefiles"
-        Write-Host "Using Unix Makefiles generator with make.exe" -ForegroundColor Yellow
+        Write-Output "Using Unix Makefiles generator with make.exe"
     }
     
-    Write-Host "=== CMake Configure ==="
+    Write-Output "=== CMake Configure ==="
     if ($makeProgram) {
         cmake -S . -B $Dir -G "$Generator" -DCMAKE_MAKE_PROGRAM="$makeProgram"
     } else {
@@ -39,11 +39,11 @@ function Build-And-Test($Generator, $Dir) {
     }
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Write-Host "=== CMake Build ==="
+    Write-Output "=== CMake Build ==="
     cmake --build $Dir --config Release
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    Write-Host "=== Run Tests ==="
+    Write-Output "=== Run Tests ==="
     Push-Location $Dir
     ctest -C Release --output-on-failure --timeout 60
     $result = $LASTEXITCODE
