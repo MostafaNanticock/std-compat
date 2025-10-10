@@ -54,30 +54,31 @@ function Build-And-Test($Generator, $Dir) {
         }
     }
     
-        Write-Host "=== CMake Configure ==="
-        $actualGenerator = $Generator
-        # If mingw32-make.exe is missing but make.exe is present, use Unix Makefiles
-        if (-not (Get-Command "mingw32-make.exe" -ErrorAction SilentlyContinue) -and (Get-Command "make.exe" -ErrorAction SilentlyContinue)) {
-            Write-Host "mingw32-make.exe not found, but make.exe is present. Switching generator to 'Unix Makefiles'." -ForegroundColor Yellow
-            $actualGenerator = "Unix Makefiles"
-        }
-        if ($makeProgram) {
-            cmake -S . -B $Dir -G "$actualGenerator" -DCMAKE_MAKE_PROGRAM="$makeProgram"
-        } else {
-            cmake -S . -B $Dir -G "$actualGenerator"
-        }
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-        Write-Host "=== CMake Build ==="
-        cmake --build $Dir --config Release
-        if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-        Write-Host "=== Run Tests ==="
-        Push-Location $Dir
-        ctest -C Release --output-on-failure --timeout 60
-        $result = $LASTEXITCODE
-        Pop-Location
-        if ($result -ne 0) { exit $result }
+    Write-Host "=== CMake Configure ==="
+    $actualGenerator = $Generator
+    # If mingw32-make.exe is missing but make.exe is present, use Unix Makefiles
+    if (-not (Get-Command "mingw32-make.exe" -ErrorAction SilentlyContinue) -and (Get-Command "make.exe" -ErrorAction SilentlyContinue)) {
+        Write-Host "mingw32-make.exe not found, but make.exe is present. Switching generator to 'Unix Makefiles'." -ForegroundColor Yellow
+        $actualGenerator = "Unix Makefiles"
     }
+    
+    if ($makeProgram) {
+        cmake -S . -B $Dir -G "$actualGenerator" -DCMAKE_MAKE_PROGRAM="$makeProgram"
+    } else {
+        cmake -S . -B $Dir -G "$actualGenerator"
+    }
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    Write-Host "=== CMake Build ==="
+    cmake --build $Dir --config Release
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+    Write-Host "=== Run Tests ==="
+    Push-Location $Dir
+    ctest -C Release --output-on-failure --timeout 60
+    $result = $LASTEXITCODE
+    Pop-Location
+    if ($result -ne 0) { exit $result }
+}
 
 Build-And-Test "$env:GENERATOR" build_mingw
