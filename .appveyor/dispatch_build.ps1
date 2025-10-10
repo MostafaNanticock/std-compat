@@ -6,7 +6,10 @@ param(
     [string]$Generator
 )
 
-$ErrorActionPreference = "Stop"
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue"
+$VerbosePreference = "Continue"
 
 Write-Host "Dispatching build for compiler: $Compiler, generator: $Generator"
 
@@ -14,7 +17,7 @@ Write-Host "Dispatching build for compiler: $Compiler, generator: $Generator"
 $script = ".appveyor/$Compiler/build.ps1"
 if (Test-Path $script) {
     Write-Host "Using compiler-specific build script: $script"
-    & "$script" -Generator $Generator
+    & "$script"
     if ($LASTEXITCODE -ne 0) {
         throw "Build script failed with exit code $LASTEXITCODE"
     }

@@ -1,3 +1,8 @@
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue"
+$VerbosePreference = "Continue"
+
 # Add MinGW to PATH
 $env:PATH = "$env:MINGW_PATH;$env:PATH"
 
@@ -33,22 +38,19 @@ function Build-And-Test($Generator, $Dir) {
     
     Write-Output "=== CMake Configure ==="
     if ($makeProgram) {
-        $configOutput = cmake -S . -B $Dir -G "$Generator" -DCMAKE_MAKE_PROGRAM="$makeProgram" 2>&1
+        cmake -S . -B $Dir -G "$Generator" -DCMAKE_MAKE_PROGRAM="$makeProgram"
     } else {
-        $configOutput = cmake -S . -B $Dir -G "$Generator" 2>&1
+        cmake -S . -B $Dir -G "$Generator"
     }
-    $configOutput | Write-Output
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
     Write-Output "=== CMake Build ==="
-    $buildOutput = cmake --build $Dir --config Release 2>&1
-    $buildOutput | Write-Output
+    cmake --build $Dir --config Release
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
     Write-Output "=== Run Tests ==="
     Push-Location $Dir
-    $testOutput = ctest -C Release --output-on-failure --timeout 60 2>&1
-    $testOutput | Write-Output
+    ctest -C Release --output-on-failure --timeout 60
     $result = $LASTEXITCODE
     Pop-Location
     if ($result -ne 0) { exit $result }

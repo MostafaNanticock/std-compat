@@ -1,5 +1,9 @@
 # _appveyor_precommit.ps1
-$ErrorActionPreference = "Stop"
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue"
+$VerbosePreference = "Continue"
+
 $repoRoot = git rev-parse --show-toplevel
 Set-Location $repoRoot
 

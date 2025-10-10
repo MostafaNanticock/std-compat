@@ -1,16 +1,18 @@
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue" 
+$VerbosePreference = "Continue"
+
 function Build-And-Test($Generator, $Arch, $Dir) {
     Write-Output "=== Building $Arch with $Generator ==="
-    $configOutput = cmake -S . -B $Dir -G "$Generator" -A $Arch 2>&1
-    $configOutput | Write-Output
+    cmake -S . -B $Dir -G "$Generator" -A $Arch
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
-    $buildOutput = cmake --build $Dir --config Release 2>&1
-    $buildOutput | Write-Output
+    cmake --build $Dir --config Release
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
     Push-Location $Dir
-    $testOutput = ctest -C Release --output-on-failure --timeout 60 2>&1
-    $testOutput | Write-Output
+    ctest -C Release --output-on-failure --timeout 60
     $result = $LASTEXITCODE
     Pop-Location
     if ($result -ne 0) { exit $result }

@@ -1,4 +1,7 @@
-$ErrorActionPreference = "Stop"
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue"
+$VerbosePreference = "Continue"
 
 # Get the directory where this script is located
 $hookSourceDir = Split-Path -Parent $MyInvocation.MyCommand.Path

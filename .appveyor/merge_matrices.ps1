@@ -5,7 +5,10 @@
 # 
 # DO NOT MODIFY THE GENERATED appveyor.yml MANUALLY - changes will be overwritten!
 
-$ErrorActionPreference = "Stop"
+# Ensure full error messages are displayed
+$ErrorActionPreference = "Continue"
+$WarningPreference = "Continue"
+$VerbosePreference = "Continue"
 
 # Get the directory containing this script (.appveyor)
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
