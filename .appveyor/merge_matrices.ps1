@@ -49,18 +49,22 @@ $($matrixContent -join "`n")
 
 build_script:
   - ps: |
-      # Dispatch to compiler-specific script if present
-      $script = ".appveyor/$env:COMPILER/build.ps1"
+      # Dispatch to compiler-specific script
+      $script = ".appveyor/$($env:COMPILER)/build.ps1"
       if (Test-Path $script) {
-          & $script
+        & "$script" -Generator "$env:GENERATOR"
+        if ($LASTEXITCODE -ne 0) {
+          throw "Build script failed with exit code $LASTEXITCODE"
+        }
       } else {
-          # fallback generic build
-          cmake -S . -B build -G "$env:GENERATOR"
-          cmake --build build --config Release
-          Push-Location build
-          ctest -C Release --output-on-failure --timeout 60
-          Pop-Location
+        # fallback generic build
+        cmake -S . -B build -G "$env:GENERATOR"
+        cmake --build build --config Release
+        Push-Location build
+        ctest -C Release --output-on-failure --timeout 60
+        Pop-Location
       }
+
 "@
 
 # Write the merged configuration
