@@ -1,6 +1,8 @@
 #ifndef PM_STD_COMPAT_LAYER_OPTIONAL
 #define PM_STD_COMPAT_LAYER_OPTIONAL
 
+#include <std-compat/crt_patches.h>
+
 #ifndef optional_CONFIG_SELECT_OPTIONAL
 #    define optional_CONFIG_SELECT_OPTIONAL 1
 #endif

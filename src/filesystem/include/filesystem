@@ -1,6 +1,8 @@
 #ifndef PM_STD_COMPAT_LAYER_FILESYSTEM
 #define PM_STD_COMPAT_LAYER_FILESYSTEM
 
+#include <std-compat/crt_patches.h>
+
 #include "std-compat/internal/filesystem.hpp"
 
 namespace std
