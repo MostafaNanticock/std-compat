@@ -27,7 +27,6 @@ public:
 #if PM_HAS_STD_MONOSTATE_OUTSIDE_VARIANT_HEADER
 #    include <xutility>
 
-#    ifdef PM_CC_MSVC
 namespace std
 {
 constexpr bool operator==(monostate, monostate) noexcept
@@ -55,7 +54,6 @@ constexpr bool operator>=(monostate, monostate) noexcept
     return true;
 }
 } // namespace std
-#    endif
 #else
 namespace std
 {
@@ -87,5 +85,19 @@ struct monostate
     }
 };
 } // namespace std
+
+//
+// MOTE: this looks stupid, but actually it is needed because for some reason
+//       MSVC fails to locate the ==, < operators for std::monostate for the
+//       functions of the nonstd::detail::Comparator<Variant> struct
+//       This only happens when:
+//          UCRT_VERSION >= 14.29 && CPP_VERSION == (C++17)
+//
+namespace nonstd
+{
+using std::operator==;
+using std::operator!=;
+using std::operator<;
+} // namespace nonstd
 
 #endif

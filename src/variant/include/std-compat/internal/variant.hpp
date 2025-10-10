@@ -2458,8 +2458,6 @@ struct Comparator
 {
     static inline bool equal( Variant const & v, Variant const & w )
     {
-        using std::operator==; // Add this line to bring the operators into scope
-
         switch( v.index() )
         {
             case 0: return get<0>( v ) == get<0>( w );
@@ -2485,8 +2483,6 @@ struct Comparator
 
     static inline bool less_than( Variant const & v, Variant const & w )
     {
-        using std::operator<; // Add this line to bring the operators into scope
-
         switch( v.index() )
         {
             case 0: return get<0>( v ) < get<0>( w );
