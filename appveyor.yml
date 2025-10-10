@@ -49,8 +49,7 @@ environment:
   - COMPILER: msvc
     APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
     GENERATOR: "Visual Studio 17 2022"
-
 build_script:
   - ps: |
       # Invoke the build dispatcher with environment parameters
-      & ".appveyor/dispatch_build.ps1" -Compiler  -Generator 
+      & ".appveyor/dispatch_build.ps1" -Compiler $env:COMPILER -Generator $env:GENERATOR
