@@ -11,12 +11,13 @@ environment:
   # WARNING: never change the indentation of the lines below - it matters for YAML parsing!
   
   # MinGW 32-bit 5.3.0 (legacy) - Available on all VS versions
-  - COMPILER: mingw
-    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
-    GENERATOR: "MinGW Makefiles"
-    MINGW_PATH: "C:\\MinGW\\bin"
-    MINGW_VERSION: "5.3.0"
-    ARCHITECTURE: "x86"
+  # fails due to the crt not implementing std::to_string
+  # - COMPILER: mingw
+  #   APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+  #   GENERATOR: "MinGW Makefiles"
+  #   MINGW_PATH: "C:\\MinGW\\bin"
+  #   MINGW_VERSION: "5.3.0"
+  #   ARCHITECTURE: "x86"
 
   # MinGW-w64 5.3.0 - Available on VS 2015+
   - COMPILER: mingw
