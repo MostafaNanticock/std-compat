@@ -52,19 +52,5 @@ environment:
 
 build_script:
   - ps: |
-      # Dispatch to compiler-specific script
-       = ".appveyor//build.ps1"
-      if (Test-Path ) {
-        & "" -Generator ""
-        if (0 -ne 0) {
-          throw "Build script failed with exit code 0"
-        }
-      } else {
-        # fallback generic build
-        cmake -S . -B build -G ""
-        cmake --build build --config Release
-        Push-Location build
-        ctest -C Release --output-on-failure --timeout 60
-        Pop-Location
-      }
-
+      # Invoke the build dispatcher with environment parameters
+      & ".appveyor/dispatch_build.ps1" -Compiler  -Generator 
