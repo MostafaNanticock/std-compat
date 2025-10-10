@@ -1,17 +1,50 @@
+﻿build_script: |
+  ps: |
+    $script = $env:SCRIPT
+    if (-not (Test-Path $script)) { Write-Error "Missing build script: $script"; exit 1 }
+    & $script
+environment:
+  matrix:
+    - MINGW_PATH: C:\\MinGW\\bin
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      SCRIPT: ci/build-mingw.ps1
+      GENERATOR: MinGW Makefiles
+      COMPILER: mingw
+    - MINGW_PATH: C:\\mingw-w64\\i686-7.3.0-posix-dwarf-rt_v5-rev0\\mingw32\\bin
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      SCRIPT: ci/build-mingw.ps1
+      GENERATOR: MinGW Makefiles
+      COMPILER: mingw
+    - MINGW_PATH: C:\\mingw-w64\\x86_64-7.3.0-posix-seh-rt_v5-rev0\\mingw64\\bin
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      SCRIPT: ci/build-mingw.ps1
+      GENERATOR: MinGW Makefiles
+      COMPILER: mingw
+    - MINGW_PATH: C:\\mingw-w64\\i686-8.1.0-posix-dwarf-rt_v6-rev0\\mingw32\\bin
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      SCRIPT: ci/build-mingw.ps1
+      GENERATOR: MinGW Makefiles
+      COMPILER: mingw
+    - MINGW_PATH: C:\\mingw-w64\\x86_64-8.1.0-posix-seh-rt_v6-rev0\\mingw64\\bin
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      SCRIPT: ci/build-mingw.ps1
+      GENERATOR: MinGW Makefiles
+      COMPILER: mingw
+    - SCRIPT: ci/build-msvc.ps1
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+      GENERATOR: Visual Studio 14 2015
+      COMPILER: msvc
+    - SCRIPT: ci/build-msvc.ps1
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+      GENERATOR: Visual Studio 15 2017
+      COMPILER: msvc
+    - SCRIPT: ci/build-msvc.ps1
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+      GENERATOR: Visual Studio 16 2019
+      COMPILER: msvc
+    - SCRIPT: ci/build-msvc.ps1
+      APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+      GENERATOR: Visual Studio 17 2022
+      COMPILER: msvc
 version: 1.0.{build}
 
-environment:
-  matrix: !include
-    - .appveyor/msvc/matrix.yml
-    - .appveyor/mingw/matrix.yml
-
-build_script:
-  - ps: |
-      $compiler = $env:COMPILER
-      $script = ".appveyor/$compiler/build.ps1"
-      if (Test-Path $script) {
-          & $script
-      } else {
-          Write-Host "No build script found for $compiler"
-          exit 1
-      }
