@@ -435,9 +435,9 @@ namespace nonstd {
 # include <stdexcept>
 #endif
 
-#if optional_CPP11_OR_GREATER
-# include <functional>
-#endif
+// #if optional_CPP11_OR_GREATER
+// # include <functional>
+// #endif
 
 #if optional_HAVE( INITIALIZER_LIST )
 # include <initializer_list>

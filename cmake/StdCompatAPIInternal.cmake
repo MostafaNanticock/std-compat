@@ -83,6 +83,9 @@ endmacro()
 #
 # Detects and displays the CRT version during configuration.
 #
+# FIXME: We should find a better way that doesn't include running the compiled binary,
+#        as this wouldn't work in cross-compilation scenarios.
+#
 function(_pm_check_crt_version)
     if(DEFINED PM_CRT_VERSION_CHECKED)
         return()
