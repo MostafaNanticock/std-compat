@@ -21,9 +21,8 @@
 #define TL_OPTIONAL_VERSION_MINOR 1
 #define TL_OPTIONAL_VERSION_PATCH 0
 
-#include "no_functional_patch.h"
-
 #include <exception>
+#include <functional>
 #include <new>
 #include <type_traits>
 #include <utility>
@@ -169,7 +168,26 @@ template <class T> struct is_const_or_const_ref<T const> : std::true_type{};
 
 // std::invoke from C++17
 // https://stackoverflow.com/questions/38288042/c11-14-invoke-workaround
-using PM::internal::invoke;
+template <typename Fn, typename... Args,
+#ifdef TL_TRAITS_LIBCXX_MEM_FN_WORKAROUND
+          typename = enable_if_t<!(is_pointer_to_non_const_member_func<Fn>::value 
+                                 && is_const_or_const_ref<Args...>::value)>, 
+#endif
+          typename = enable_if_t<std::is_member_pointer<decay_t<Fn>>::value>,
+          int = 0>
+constexpr auto invoke(Fn &&f, Args &&... args) noexcept(
+    noexcept(std::mem_fn(f)(std::forward<Args>(args)...)))
+    -> decltype(std::mem_fn(f)(std::forward<Args>(args)...)) {
+  return std::mem_fn(f)(std::forward<Args>(args)...);
+}
+
+template <typename Fn, typename... Args,
+          typename = enable_if_t<!std::is_member_pointer<decay_t<Fn>>::value>>
+constexpr auto invoke(Fn &&f, Args &&... args) noexcept(
+    noexcept(std::forward<Fn>(f)(std::forward<Args>(args)...)))
+    -> decltype(std::forward<Fn>(f)(std::forward<Args>(args)...)) {
+  return std::forward<Fn>(f)(std::forward<Args>(args)...);
+}
 
 // std::invoke_result from C++17
 template <class F, class, class... Us> struct invoke_result_impl;
