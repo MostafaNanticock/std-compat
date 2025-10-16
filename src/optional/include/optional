@@ -5,8 +5,6 @@
 
 #include "std-compat/internal/optional.hpp"
 
-// #include "optional-fun.hpp" // This is supposedd to add support for monadic operations
-
 namespace std
 {
 template <class T>
