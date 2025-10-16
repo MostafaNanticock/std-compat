@@ -3,10 +3,6 @@
 
 #include <std-compat/crt_patches.h>
 
-#ifndef optional_CONFIG_SELECT_OPTIONAL
-#    define optional_CONFIG_SELECT_OPTIONAL 1
-#endif
-
 #include "std-compat/internal/optional.hpp"
 
 // #include "optional-fun.hpp" // This is supposedd to add support for monadic operations
@@ -14,10 +10,10 @@
 namespace std
 {
 template <class T>
-using optional = nonstd::optional<T>;
+using optional = tl::optional<T>;
 
 // Exception
-using nonstd::bad_optional_access;
+using tl::bad_optional_access;
 
 #ifdef PM_SHIM_STD_IN_PLACE // FIXME: define when exactly do we need to enable this
 #    ifndef __cpp_lib_in_place_t
@@ -30,10 +26,10 @@ using nonstd::in_place;
 #endif
 
 // nullopt and its tag type
-using nonstd::nullopt;
-using nonstd::nullopt_t;
+using tl::nullopt;
+using tl::nullopt_t;
 
-using nonstd::make_optional;
+using tl::make_optional;
 
 // // Non-member swap customization point
 // using nonstd::optfun_lite::swap;
