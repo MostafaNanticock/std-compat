@@ -1,16 +1,16 @@
 include(StdCompatAPIInternal)
 
-_std_compat_detect_cxx_standards()
+_stdc_detect_cxx_standards()
 _pm_check_crt_version()
 
 # Usage:
-#   std_compat_add_module(TARGET_NAME
+#   stdc_add_module(TARGET_NAME
 #       <SOURCES...>
 #       <DEPENDS...>
 #       <INCLUDE_DIRS...>
 #       <COMPILE_DEFINITIONS...>
 #   )
-function(std_compat_add_module TARGET_NAME)
+function(stdc_add_module TARGET_NAME)
     set(options)
     set(oneValueArgs)
     set(multiValueArgs
@@ -43,12 +43,12 @@ function(std_compat_add_module TARGET_NAME)
     endif()
 
     # Include directories
-    set(STD_COMPAT_DEFAULT_INCLUDE_DIRS
+    set(STDC_DEFAULT_INCLUDE_DIRS
         ${CMAKE_CURRENT_LIST_DIR}/include
     )
     target_include_directories(${TARGET_NAME}
         INTERFACE
-            $<BUILD_INTERFACE:${STD_COMPAT_DEFAULT_INCLUDE_DIRS}>
+            $<BUILD_INTERFACE:${STDC_DEFAULT_INCLUDE_DIRS}>
     )
 
     if(STDCOMPAT_INCLUDE_DIRS)
@@ -70,9 +70,8 @@ function(std_compat_add_module TARGET_NAME)
     endif()
 endfunction()
 
-
 # Usage:
-#   std_compat_add_test(
+#   stdc_add_test(
 #       <BASE_NAME>
 #       <DEPENDS>
 #       <Sources...>
@@ -80,12 +79,12 @@ endfunction()
 #
 # Example:
 #   set(TEST_DEPENDS MyLib Qt6::Test)
-#   std_compat_add_test(tst_any "${TEST_DEPENDS}" tst_any.cpp)
+#   stdc_add_test(tst_any "${TEST_DEPENDS}" tst_any.cpp)
 #
 # This will generate executables/tests:
 #   tst_any_cxx11, tst_any_cxx14, tst_any_cxx17, ...
 #
-macro(std_compat_add_test BASE_NAME DEPENDS)
+macro(stdc_add_test BASE_NAME DEPENDS)
     set(_deps "${DEPENDS}")
     set(_sources ${ARGN})
 

@@ -1,4 +1,4 @@
-std_compat_add_module(filesystem
+stdc_add_module(filesystem
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/filesystem
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/filesystem.hpp

@@ -1,4 +1,4 @@
-std_compat_add_module(common
+stdc_add_module(common
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/crt_patches.h
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/crt_patches/patches.h

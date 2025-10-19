@@ -1,4 +1,4 @@
-std_compat_add_module(expected
+stdc_add_module(expected
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/expected
         ${CMAKE_CURRENT_SOURCE_DIR}/include/expected_compatibility

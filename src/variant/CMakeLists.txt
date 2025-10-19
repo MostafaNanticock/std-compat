@@ -1,4 +1,4 @@
-std_compat_add_module(variant
+stdc_add_module(variant
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/variant
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/variant.hpp

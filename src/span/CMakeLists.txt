@@ -1,4 +1,4 @@
-std_compat_add_module(span
+stdc_add_module(span
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/span
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/span.hpp

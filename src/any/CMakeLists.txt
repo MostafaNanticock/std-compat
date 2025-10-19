@@ -1,4 +1,4 @@
-std_compat_add_module(any
+stdc_add_module(any
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/any
         ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/any.hpp
