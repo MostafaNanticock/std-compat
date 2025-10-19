@@ -5,7 +5,12 @@ $VerbosePreference = "Continue"
 
 function Build-And-Test($Generator, $Arch, $Dir) {
     Write-Output "=== Building $Arch with $Generator ==="
-    cmake -S . -B $Dir -G "$Generator" -A $Arch
+    # NOTE: Using the visual studio generator is slower than ninja,
+    #       So we use ninja here for faster builds instead of using the provided generator
+    #
+    #       cmake -S . -B $Dir -G "$Generator" -A $Arch 
+    #
+    cmake -S . -B $Dir -G "Ninja" -A $Arch
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
     cmake --build $Dir --config Release
