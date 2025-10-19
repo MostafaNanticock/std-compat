@@ -1,25 +1,14 @@
-function Get-VcVarsPath {
-    param([string]$Arch)
-
-    # Use vswhere to locate the latest VS installation on this image
-    $vsInstall = & "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe" `
-        -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
-        -property installationPath
-
-    if (-not $vsInstall) {
-        Write-Error "Visual Studio installation not found"
-        exit 1
-    }
-
-    return Join-Path $vsInstall "VC\Auxiliary\Build\vcvarsall.bat"
-}
-
 function Build-And-Test($Arch, $Dir) {
     Write-Output "=== Building $Arch with Ninja ==="
 
-    $vcvars = Get-VcVarsPath $Arch
+    $vcvars = Join-Path $env:VSINSTALLDIR "VC\Auxiliary\Build\vcvarsall.bat"
 
-    # Call vcvarsall.bat to set up MSVC environment for the given arch
+    if (-not (Test-Path $vcvars)) {
+        Write-Error "vcvarsall.bat not found at $vcvars"
+        exit 1
+    }
+
+    # Run vcvarsall + cmake + build + test in one cmd.exe invocation
     cmd /c "`"$vcvars`" $Arch && cmake -S . -B $Dir -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build $Dir && ctest --test-dir $Dir --output-on-failure --timeout 60"
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
