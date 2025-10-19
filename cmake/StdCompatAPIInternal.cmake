@@ -1,7 +1,7 @@
 # Detect which C++ standard values are supported by the current compiler.
 # On import, it sets PM_AVAILABLE_CXX_STANDARDS in the including scope.
 #
-function(_pm_detect_cxx_standards)
+function(_std_compat_detect_cxx_standards)
     include(CheckCXXCompilerFlag)
 
     set(_standards 11 14 17 20 23 26)

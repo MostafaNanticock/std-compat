@@ -1,6 +1,6 @@
 include(StdCompatAPIInternal)
 
-_pm_detect_cxx_standards()
+_std_compat_detect_cxx_standards()
 _pm_check_crt_version()
 
 # Usage:
