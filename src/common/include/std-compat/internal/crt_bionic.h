@@ -3,35 +3,35 @@
 #include <android/api-level.h>
 
 #ifdef __ANDROID_API__
-#    ifndef PM_CRT_VERSION_MAJOR
-#        define PM_CRT_VERSION_MAJOR (__ANDROID_API__ / 100)
+#    ifndef STDC_CRT_VERSION_MAJOR
+#        define STDC_CRT_VERSION_MAJOR (__ANDROID_API__ / 100)
 #    endif
 
-#    ifndef PM_CRT_VERSION_MINOR
-#        define PM_CRT_VERSION_MINOR (__ANDROID_API__ % 100)
+#    ifndef STDC_CRT_VERSION_MINOR
+#        define STDC_CRT_VERSION_MINOR (__ANDROID_API__ % 100)
 #    endif
 #else
-#    ifndef PM_CRT_VERSION_MAJOR
-#        define PM_CRT_VERSION_MAJOR 0
+#    ifndef STDC_CRT_VERSION_MAJOR
+#        define STDC_CRT_VERSION_MAJOR 0
 #    endif
 
-#    ifndef PM_CRT_VERSION_MINOR
-#        define PM_CRT_VERSION_MINOR 0
+#    ifndef STDC_CRT_VERSION_MINOR
+#        define STDC_CRT_VERSION_MINOR 0
 #    endif
 #endif
 
-#ifndef PM_CRT_VERSION_BUILD
-#    define PM_CRT_VERSION_BUILD 0
+#ifndef STDC_CRT_VERSION_BUILD
+#    define STDC_CRT_VERSION_BUILD 0
 #endif
 
-#ifndef PM_CRT_VERSION_REVISION
-#    define PM_CRT_VERSION_REVISION 0
+#ifndef STDC_CRT_VERSION_REVISION
+#    define STDC_CRT_VERSION_REVISION 0
 #endif
 
-#ifndef PM_CRT_NAME
-#    define PM_CRT_NAME "Android Bionic libc"
+#ifndef STDC_CRT_NAME
+#    define STDC_CRT_NAME "Android Bionic libc"
 #endif
 
-#ifndef PM_CRT_BIONIC
-#    define PM_CRT_BIONIC ((PM_CRT_VERSION_MAJOR * 1000000) + (PM_CRT_VERSION_MINOR * 10000) + (PM_CRT_VERSION_BUILD * 100) + PM_CRT_VERSION_REVISION)
+#ifndef STDC_CRT_BIONIC
+#    define STDC_CRT_BIONIC ((STDC_CRT_VERSION_MAJOR * 1000000) + (STDC_CRT_VERSION_MINOR * 10000) + (STDC_CRT_VERSION_BUILD * 100) + STDC_CRT_VERSION_REVISION)
 #endif

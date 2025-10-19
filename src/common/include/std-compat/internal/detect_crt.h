@@ -31,10 +31,10 @@ namespace internal
     inline std::string crtVersionString()
     {
         // clang-format off
-        static std::string result = std::to_string(PM_CRT_VERSION_MAJOR) + "." +
-                                    std::to_string(PM_CRT_VERSION_MINOR) + "." +
-                                    std::to_string(PM_CRT_VERSION_BUILD) + "." +
-                                    std::to_string(PM_CRT_VERSION_REVISION);
+        static std::string result = std::to_string(STDC_CRT_VERSION_MAJOR) + "." +
+                                    std::to_string(STDC_CRT_VERSION_MINOR) + "." +
+                                    std::to_string(STDC_CRT_VERSION_BUILD) + "." +
+                                    std::to_string(STDC_CRT_VERSION_REVISION);
         // clang-format on
 
         return result;

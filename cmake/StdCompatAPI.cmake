@@ -1,7 +1,7 @@
 include(StdCompatAPIInternal)
 
 _stdc_detect_cxx_standards()
-_pm_check_crt_version()
+_stdc_check_crt_version()
 
 # Usage:
 #   stdc_add_module(TARGET_NAME
