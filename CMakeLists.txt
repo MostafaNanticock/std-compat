@@ -10,6 +10,7 @@ include(StdCompatAPI)
 # Create a header-only interface library
 add_library(StdCompat INTERFACE)
 
+# add_subdirectory(tools)
 add_subdirectory(src)
 enable_testing()
 add_subdirectory(tests)

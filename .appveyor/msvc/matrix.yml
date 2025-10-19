@@ -1,0 +1,16 @@
+  # WARNING: never change the indentation of the lines below - it matters for YAML parsing!
+  - COMPILER: msvc
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2015
+    GENERATOR: "Visual Studio 14 2015"
+
+  - COMPILER: msvc
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    GENERATOR: "Visual Studio 15 2017"
+
+  - COMPILER: msvc
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    GENERATOR: "Visual Studio 16 2019"
+
+  - COMPILER: msvc
+    APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2022
+    GENERATOR: "Visual Studio 17 2022"

@@ -1,29 +1,12 @@
-set(INCLUDE_DIRS
-    ${CMAKE_CURRENT_SOURCE_DIR}/include
-)
+std_compat_add_module(expected
+    SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/expected
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/expected_compatibility
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/expected.hpp
 
-add_library(StdCompat_expected INTERFACE)
-add_library(StdCompat::expected ALIAS StdCompat_expected)
+    DEPENDS
+        StdCompat::common
 
-target_sources(StdCompat_expected
-INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/expected
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/expected_compatibility
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/std-compat/internal/expected.hpp
-)
-
-target_link_libraries(StdCompat_expected
-INTERFACE
-    StdCompat_common
-)
-
-# Add include directories to consumers, BEFORE system includes
-target_include_directories(StdCompat_expected
-    INTERFACE
-        $<BUILD_INTERFACE:${INCLUDE_DIRS}>
-)
-
-target_compile_definitions(StdCompat_expected
-    INTERFACE
+    COMPILE_DEFINITIONS
         nsel_CONFIG_SELECT_EXPECTED=1
 )

@@ -1,5 +1,6 @@
 #include <testing.h>
 
+#define STD_OPTIONAL_HAS_MONADIC_OPERATIONS
 #include <optional>
 
 // Optional feature toggles (if we need c++23 compatibility [Off by default]):

@@ -1,0 +1,1 @@
+add_subdirectory(crt_version_check)

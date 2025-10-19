@@ -1,6 +1,8 @@
 #ifndef PM_STD_COMPAT_LAYER_ANY
 #define PM_STD_COMPAT_LAYER_ANY
 
+#include <std-compat/crt_patches.h>
+
 #ifndef any_CONFIG_SELECT_ANY
 #    define any_CONFIG_SELECT_ANY 1
 #endif

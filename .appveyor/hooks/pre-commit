@@ -1,0 +1,26 @@
+#!/bin/sh
+# Cross-platform Git pre-commit hook
+# Works on Windows, macOS, and Linux
+
+echo "[AppVeyor] Running pre-commit hook..."
+
+# Figure out which PowerShell is available
+if command -v pwsh >/dev/null 2>&1; then
+    POWERSHELL="pwsh"
+elif command -v powershell >/dev/null 2>&1; then
+    POWERSHELL="powershell"
+else
+    echo "Error: PowerShell not found." >&2
+    exit 1
+fi
+
+# Run the precommit script
+$POWERSHELL -NoProfile -ExecutionPolicy Bypass -File ".appveyor/_appveyor_precommit.ps1"
+EXITCODE=$?
+
+if [ $EXITCODE -ne 0 ]; then
+    echo "[AppVeyor] Pre-commit failed — aborting commit."
+    exit $EXITCODE
+fi
+
+exit 0

@@ -43,3 +43,4 @@
 *.dwo
 *.user
 *.autosave
+appveyor.merged.yml
