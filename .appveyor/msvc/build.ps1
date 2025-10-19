@@ -1,18 +1,50 @@
-function Build-And-Test($Arch, $Dir) {
-    Write-Output "=== Building $Arch with Ninja ==="
-
-    $vcvars = Join-Path $env:VSINSTALLDIR "VC\Auxiliary\Build\vcvarsall.bat"
-
-    if (-not (Test-Path $vcvars)) {
-        Write-Error "vcvarsall.bat not found at $vcvars"
-        exit 1
+function Get-VcVarsPath {
+    try {
+        $vsInstall = vswhere -latest -products * `
+            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -property installationPath 2>$null
+    } catch {
+        $vsInstall = $null
     }
 
-    # Run vcvarsall + cmake + build + test in one cmd.exe invocation
-    cmd /c "`"$vcvars`" $Arch && cmake -S . -B $Dir -G Ninja -DCMAKE_BUILD_TYPE=Release && cmake --build $Dir && ctest --test-dir $Dir --output-on-failure --timeout 60"
+    if ($vsInstall -and (Test-Path $vsInstall)) {
+        return Join-Path $vsInstall "VC\Auxiliary\Build\vcvarsall.bat"
+    }
+
+    switch -Wildcard ($env:APPVEYOR_BUILD_WORKER_IMAGE) {
+        "Visual Studio 2015*" {
+            return "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat"
+        }
+        default {
+            throw "Could not locate Visual Studio installation"
+        }
+    }
+}
+
+function Build-And-Test {
+    param(
+        [string]$Arch,
+        [string]$Dir
+    )
+
+    $vcvars = Get-VcVarsPath
+    Write-Output "=== Building $Arch with Ninja in $Dir ==="
+
+    $inner = @"
+& `"$vcvars`" $Arch >`$null
+cmake -S . -B $Dir -G Ninja -DCMAKE_BUILD_TYPE=Release
+if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }
+cmake --build $Dir
+if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }
+ctest --test-dir $Dir --output-on-failure --timeout 60
+if (`$LASTEXITCODE -ne 0) { exit `$LASTEXITCODE }
+"@
+
+    # Run in a clean PowerShell process, inheriting console output
+    $exitCode = & powershell.exe -NoProfile -NonInteractive -Command $inner
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 }
 
-# Build both architectures sequentially
+# Sequential builds
 Build-And-Test x86 build_x86
 Build-And-Test x64 build_x64
