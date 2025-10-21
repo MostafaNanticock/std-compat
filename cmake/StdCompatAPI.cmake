@@ -11,16 +11,11 @@ _stdc_check_crt_version()
 #       <COMPILE_DEFINITIONS...>
 #   )
 function(stdc_add_module TARGET_NAME)
-    set(options)
-    set(oneValueArgs)
-    set(multiValueArgs
-        INCLUDE_DIRS
-        SOURCES
-        DEPENDS
-        COMPILE_DEFINITIONS
-    )
     cmake_parse_arguments(STDCOMPAT
-        "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
+        "DISABLE_BY_DEFAULT"
+        ""
+        "INCLUDE_DIRS;SOURCES;DEPENDS;COMPILE_DEFINITIONS"
+        ${ARGN})
 
     # Create the interface library
     add_library(${TARGET_NAME} INTERFACE)
