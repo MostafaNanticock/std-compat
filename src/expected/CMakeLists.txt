@@ -1,4 +1,6 @@
 stdc_add_module(expected
+    DISABLE_BY_DEFAULT  # WIP
+
     SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/include/expected
         ${CMAKE_CURRENT_SOURCE_DIR}/include/expected_compatibility
