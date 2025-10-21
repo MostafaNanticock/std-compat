@@ -61,7 +61,7 @@ function(stdc_add_module TARGET_NAME)
     endif()
 
     # Add supported C++ standard definitions
-    _pm_add_supported_cxx_standards_definitions(${TARGET_NAME})
+    _stdc_add_supported_cxx_standards_definitions(${TARGET_NAME})
 
     # Compile definitions
     if(_arg_COMPILE_DEFINITIONS)
@@ -90,7 +90,7 @@ macro(stdc_add_test BASE_NAME DEPENDS)
     set(_deps "${DEPENDS}")
     set(_sources ${ARGN})
 
-    pm_skip_if_targets_dont_exist(${_deps})
+    _stdc_skip_if_targets_dont_exist(${_deps})
 
     foreach(_std IN LISTS PM_AVAILABLE_CXX_STANDARDS)
         set(_tgt "${BASE_NAME}_cxx${_std}")

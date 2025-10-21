@@ -109,9 +109,9 @@ endfunction()
 
 
 # Usage:
-#   _pm_target_exists(<target_name> <result_var>)
+#   _stdc_target_exists(<target_name> <result_var>)
 #
-function(_pm_target_exists target_name result_var)
+function(_stdc_target_exists target_name result_var)
     if(TARGET "${target_name}")
         set(${result_var} TRUE PARENT_SCOPE)
     else()
@@ -120,12 +120,12 @@ function(_pm_target_exists target_name result_var)
 endfunction()
 
 # Usage:
-#   _pm_targets_exist(<result_var> <target1> [<target2> ...])
+#   _stdc_all_targets_exist(<result_var> <target1> [<target2> ...])
 #
-function(_pm_targets_exist result_var)
+function(_stdc_all_targets_exist result_var)
     set(_all_exist TRUE)
     foreach(_tgt IN LISTS ARGN)
-        _pm_target_exists("${_tgt}" _exists)
+        _stdc_target_exists("${_tgt}" _exists)
         if(NOT _exists)
             set(_all_exist FALSE)
         endif()
@@ -134,10 +134,10 @@ function(_pm_targets_exist result_var)
 endfunction()
 
 # Usage:
-#   pm_skip_if_targets_dont_exist(<target1> [<target2> ...])
+#   _stdc_skip_if_targets_dont_exist(<target1> [<target2> ...])
 #
-macro(pm_skip_if_targets_dont_exist)
-    _pm_targets_exist(_all_exist ${ARGV})
+macro(_stdc_skip_if_targets_dont_exist)
+    _stdc_all_targets_exist(_all_exist ${ARGV})
     if(NOT _all_exist)
         # just stop this file.
         return()
@@ -145,9 +145,9 @@ macro(pm_skip_if_targets_dont_exist)
 endmacro()
 
 # Usage:
-#   _pm_add_supported_cxx_standards_definitions(<Target>)
+#   _stdc_add_supported_cxx_standards_definitions(<Target>)
 #
-macro(_pm_add_supported_cxx_standards_definitions target)
+macro(_stdc_add_supported_cxx_standards_definitions target)
     foreach(_std IN LISTS PM_AVAILABLE_CXX_STANDARDS)
         target_compile_definitions(${target}
             INTERFACE
