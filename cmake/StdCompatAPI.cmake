@@ -11,29 +11,36 @@ _stdc_check_crt_version()
 #       <COMPILE_DEFINITIONS...>
 #   )
 function(stdc_add_module TARGET_NAME)
-    cmake_parse_arguments(STDCOMPAT
+    cmake_parse_arguments(_arg
         "DISABLE_BY_DEFAULT"
         ""
         "INCLUDE_DIRS;SOURCES;DEPENDS;COMPILE_DEFINITIONS"
         ${ARGN})
+
+    _stdc_add_module_option(${TARGET_NAME} _arg_DISABLE_BY_DEFAULT)
+
+    # Only compile this module if it is enabled
+    if(NOT STDC_${TARGET_NAME})
+        return()
+    endif()
 
     # Create the interface library
     add_library(${TARGET_NAME} INTERFACE)
     add_library(StdCompat::${TARGET_NAME} ALIAS ${TARGET_NAME})
 
     # Sources
-    if(STDCOMPAT_SOURCES)
+    if(_arg_SOURCES)
         target_sources(${TARGET_NAME}
             INTERFACE
-                ${STDCOMPAT_SOURCES}
+                ${_arg_SOURCES}
         )
     endif()
 
     # Dependencies
-    if(STDCOMPAT_DEPENDS)
+    if(_arg_DEPENDS)
         target_link_libraries(${TARGET_NAME}
             INTERFACE
-                ${STDCOMPAT_DEPENDS}
+                ${_arg_DEPENDS}
         )
     endif()
 
@@ -46,10 +53,10 @@ function(stdc_add_module TARGET_NAME)
             $<BUILD_INTERFACE:${STDC_DEFAULT_INCLUDE_DIRS}>
     )
 
-    if(STDCOMPAT_INCLUDE_DIRS)
+    if(_arg_INCLUDE_DIRS)
         target_include_directories(${TARGET_NAME}
             INTERFACE
-                $<BUILD_INTERFACE:${STDCOMPAT_INCLUDE_DIRS}>
+                $<BUILD_INTERFACE:${_arg_INCLUDE_DIRS}>
         )
     endif()
 
@@ -57,10 +64,10 @@ function(stdc_add_module TARGET_NAME)
     _pm_add_supported_cxx_standards_definitions(${TARGET_NAME})
 
     # Compile definitions
-    if(STDCOMPAT_COMPILE_DEFINITIONS)
+    if(_arg_COMPILE_DEFINITIONS)
         target_compile_definitions(${TARGET_NAME}
             INTERFACE
-                ${STDCOMPAT_COMPILE_DEFINITIONS}
+                ${_arg_COMPILE_DEFINITIONS}
         )
     endif()
 endfunction()

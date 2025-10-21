@@ -30,6 +30,84 @@ function(_stdc_detect_cxx_standards)
     set(PM_AVAILABLE_CXX_STANDARDS "${_available}" PARENT_SCOPE)
 endfunction()
 
+# Create a toggle option for an StdCompat module
+macro(_stdc_add_module_option TARGET_NAME DISABLE_BY_DEFAULT)
+    # Decide default enable state
+    set(_default_enabled ON)
+    if(${DISABLE_BY_DEFAULT})
+        set(_default_enabled OFF)
+    endif()
+
+    option(STDC_${TARGET_NAME}
+        "Enable StdCompat::${TARGET_NAME}"
+        ${_default_enabled})
+
+    # Export result to caller scope
+    set(STDC_${TARGET_NAME} ${STDC_${TARGET_NAME}} PARENT_SCOPE)
+endmacro()
+
+# Usage:
+#   _stdc_check_crt_version()
+#
+# Detects and displays the CRT version during configuration.
+#
+# FIXME: We should find a better way that doesn't include running the compiled binary,
+#        as this wouldn't work in cross-compilation scenarios.
+#
+function(_stdc_check_crt_version)
+    if(DEFINED STDC_CRT_VERSION_CHECKED)
+        return()
+    endif()
+    set(STDC_CRT_VERSION_CHECKED TRUE CACHE INTERNAL "CRT version has been checked")
+
+    message(STATUS "Checking CRT version...")
+
+    try_run(CRT_CHECK_RUN_RESULT CRT_CHECK_COMPILE_RESULT
+        ${CMAKE_CURRENT_BINARY_DIR}/crt_version_check
+        ${CMAKE_CURRENT_SOURCE_DIR}/tools/crt_version_check/crt_version_check.cpp
+        COMPILE_OUTPUT_VARIABLE CRT_CHECK_COMPILE_OUTPUT
+        RUN_OUTPUT_VARIABLE CRT_VERSION_OUTPUT
+    )
+
+if(CRT_CHECK_COMPILE_RESULT AND CRT_CHECK_RUN_RESULT EQUAL 0)
+    string(REPLACE "\n" ";" CRT_VERSION_LINES "${CRT_VERSION_OUTPUT}")
+
+    foreach(line IN LISTS CRT_VERSION_LINES)
+        if(line MATCHES "^STDC_CRT_NAME=(.*)")
+            string(STRIP "${CMAKE_MATCH_1}" _raw_crt_name)
+            string(REGEX REPLACE "\n" "" _clean_crt_name "${_raw_crt_name}")
+            set(STDC_CRT_NAME "${_clean_crt_name}" CACHE STRING "Detected CRT name")
+        elseif(line MATCHES "^STDC_CRT_VERSION_STRING=(.*)")
+            string(STRIP "${CMAKE_MATCH_1}" _version_string)
+            set(STDC_CRT_VERSION_STRING "${_version_string}" CACHE STRING "Full CRT version string")
+        elseif(line MATCHES "^STDC_CRT_VERSION_MAJOR=(.*)")
+            set(STDC_CRT_VERSION_MAJOR "${CMAKE_MATCH_1}" CACHE STRING "CRT major version")
+        elseif(line MATCHES "^STDC_CRT_VERSION_MINOR=(.*)")
+            set(STDC_CRT_VERSION_MINOR "${CMAKE_MATCH_1}" CACHE STRING "CRT minor version")
+        elseif(line MATCHES "^STDC_CRT_VERSION_BUILD=(.*)")
+            set(STDC_CRT_VERSION_BUILD "${CMAKE_MATCH_1}" CACHE STRING "CRT build version")
+        elseif(line MATCHES "^STDC_CRT_VERSION_REVISION=(.*)")
+            set(STDC_CRT_VERSION_REVISION "${CMAKE_MATCH_1}" CACHE STRING "CRT revision version")
+        endif()
+    endforeach()
+
+    message(STATUS "CRT Name    : ${STDC_CRT_NAME}")
+    message(STATUS "CRT Version : ${STDC_CRT_VERSION_STRING}")
+else()
+    message(WARNING "Failed to determine CRT version")
+    if(NOT CRT_CHECK_COMPILE_RESULT)
+        message(STATUS "Compile error:\n${CRT_CHECK_COMPILE_OUTPUT}")
+    endif()
+    set(STDC_CRT_NAME "unknown" CACHE STRING "Detected CRT name")
+    set(STDC_CRT_VERSION_STRING "0.0.0.0" CACHE STRING "Full CRT version string")
+    set(STDC_CRT_VERSION_MAJOR 0 CACHE STRING "CRT major version")
+    set(STDC_CRT_VERSION_MINOR 0 CACHE STRING "CRT minor version")
+    set(STDC_CRT_VERSION_BUILD 0 CACHE STRING "CRT build version")
+    set(STDC_CRT_VERSION_REVISION 0 CACHE STRING "CRT revision version")
+endif()
+endfunction()
+
+
 # Usage:
 #   _pm_target_exists(<target_name> <result_var>)
 #
@@ -73,68 +151,7 @@ macro(_pm_add_supported_cxx_standards_definitions target)
     foreach(_std IN LISTS PM_AVAILABLE_CXX_STANDARDS)
         target_compile_definitions(${target}
             INTERFACE
-                _PM_CC_SUPPORTS_CXX${_std}
+            _PM_CC_SUPPORTS_CXX${_std}
         )
-    endforeach()
+endforeach()
 endmacro()
-
-# Usage:
-#   _stdc_check_crt_version()
-#
-# Detects and displays the CRT version during configuration.
-#
-# FIXME: We should find a better way that doesn't include running the compiled binary,
-#        as this wouldn't work in cross-compilation scenarios.
-#
-function(_stdc_check_crt_version)
-    if(DEFINED STDC_CRT_VERSION_CHECKED)
-        return()
-    endif()
-    set(STDC_CRT_VERSION_CHECKED TRUE CACHE INTERNAL "CRT version has been checked")
-
-    message(STATUS "Checking CRT version...")
-
-    try_run(CRT_CHECK_RUN_RESULT CRT_CHECK_COMPILE_RESULT
-        ${CMAKE_CURRENT_BINARY_DIR}/crt_version_check
-        ${CMAKE_CURRENT_SOURCE_DIR}/tools/crt_version_check/crt_version_check.cpp
-        COMPILE_OUTPUT_VARIABLE CRT_CHECK_COMPILE_OUTPUT
-        RUN_OUTPUT_VARIABLE CRT_VERSION_OUTPUT
-    )
-
-    if(CRT_CHECK_COMPILE_RESULT AND CRT_CHECK_RUN_RESULT EQUAL 0)
-        string(REPLACE "\n" ";" CRT_VERSION_LINES "${CRT_VERSION_OUTPUT}")
-
-        foreach(line IN LISTS CRT_VERSION_LINES)
-            if(line MATCHES "^STDC_CRT_NAME=(.*)")
-                string(STRIP "${CMAKE_MATCH_1}" _raw_crt_name)
-                string(REGEX REPLACE "\n" "" _clean_crt_name "${_raw_crt_name}")
-                set(STDC_CRT_NAME "${_clean_crt_name}" CACHE STRING "Detected CRT name")
-            elseif(line MATCHES "^STDC_CRT_VERSION_STRING=(.*)")
-                string(STRIP "${CMAKE_MATCH_1}" _version_string)
-                set(STDC_CRT_VERSION_STRING "${_version_string}" CACHE STRING "Full CRT version string")
-            elseif(line MATCHES "^STDC_CRT_VERSION_MAJOR=(.*)")
-                set(STDC_CRT_VERSION_MAJOR "${CMAKE_MATCH_1}" CACHE STRING "CRT major version")
-            elseif(line MATCHES "^STDC_CRT_VERSION_MINOR=(.*)")
-                set(STDC_CRT_VERSION_MINOR "${CMAKE_MATCH_1}" CACHE STRING "CRT minor version")
-            elseif(line MATCHES "^STDC_CRT_VERSION_BUILD=(.*)")
-                set(STDC_CRT_VERSION_BUILD "${CMAKE_MATCH_1}" CACHE STRING "CRT build version")
-            elseif(line MATCHES "^STDC_CRT_VERSION_REVISION=(.*)")
-                set(STDC_CRT_VERSION_REVISION "${CMAKE_MATCH_1}" CACHE STRING "CRT revision version")
-            endif()
-        endforeach()
-
-        message(STATUS "CRT Name    : ${STDC_CRT_NAME}")
-        message(STATUS "CRT Version : ${STDC_CRT_VERSION_STRING}")
-    else()
-        message(WARNING "Failed to determine CRT version")
-        if(NOT CRT_CHECK_COMPILE_RESULT)
-            message(STATUS "Compile error:\n${CRT_CHECK_COMPILE_OUTPUT}")
-        endif()
-        set(STDC_CRT_NAME "unknown" CACHE STRING "Detected CRT name")
-        set(STDC_CRT_VERSION_STRING "0.0.0.0" CACHE STRING "Full CRT version string")
-        set(STDC_CRT_VERSION_MAJOR 0 CACHE STRING "CRT major version")
-        set(STDC_CRT_VERSION_MINOR 0 CACHE STRING "CRT minor version")
-        set(STDC_CRT_VERSION_BUILD 0 CACHE STRING "CRT build version")
-        set(STDC_CRT_VERSION_REVISION 0 CACHE STRING "CRT revision version")
-    endif()
-endfunction()
