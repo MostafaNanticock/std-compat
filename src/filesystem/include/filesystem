@@ -14,143 +14,20 @@ namespace filesystem
         using base = ghc::filesystem::path;
 
     public:
-        using base::base; // inherit constructors
+        using base::base;      // inherit constructors
+        using base::operator=; // inherit assignment operators
 
-        // using base::operator=;
-        template <class Source>
-        inline std::filesystem::path &operator=(const Source &source)
+        path() : base::path()
         {
-            return static_cast<std::filesystem::path &>(base::operator=(source));
         }
 
-        // using base::append;
-        template <class InputIterator>
-        inline std::filesystem::path &append(InputIterator first, InputIterator last)
+        // implicit conversion from base
+        path(const base &other) : base(other)
         {
-            return static_cast<std::filesystem::path &>(base::append(first, last));
         }
-
-        // using base::compare;
-
-        using base::concat;
-        template <class Source>
-        inline std::filesystem::path &concat(const Source &x)
+        path(base &&other) noexcept : base(std::move(other))
         {
-            return static_cast<std::filesystem::path &>(base::concat(x));
         }
-        template <class InputIterator>
-        inline std::filesystem::path &concat(InputIterator first, InputIterator last)
-        {
-            return static_cast<std::filesystem::path &>(base::concat(first, last));
-        }
-
-        // using base::empty;
-
-        // using base::extension;
-        inline std::filesystem::path extension() const
-        {
-            return static_cast<std::filesystem::path>(base::extension());
-        }
-
-        // using base::filename;
-        inline std::filesystem::path filename() const
-        {
-            return static_cast<std::filesystem::path>(base::filename());
-        }
-
-        // using base::generic_string;
-        // using base::has_extension;
-        // using base::has_filename;
-        // using base::has_parent_path;
-        // using base::has_relative_path;
-        // using base::is_absolute;
-        // using base::is_relative;
-
-        // using base::lexically_normal;
-        inline std::filesystem::path lexically_normal() const
-        {
-            return static_cast<std::filesystem::path>(base::lexically_normal());
-        }
-
-        // using base::lexically_proximate;
-        inline std::filesystem::path lexically_proximate(const path &base) const
-        {
-            return static_cast<std::filesystem::path>(base::lexically_proximate(base));
-        }
-
-        // using base::lexically_relative;
-        inline std::filesystem::path lexically_relative(const path &base) const
-        {
-            return static_cast<std::filesystem::path>(base::lexically_relative(base));
-        }
-
-        // using base::make_preferred;
-        inline std::filesystem::path &make_preferred()
-        {
-            return static_cast<std::filesystem::path &>(base::make_preferred());
-        }
-
-        // using base::parent_path;
-        inline std::filesystem::path parent_path() const
-        {
-            return static_cast<std::filesystem::path>(base::parent_path());
-        }
-
-        // using base::relative_path;
-        inline std::filesystem::path relative_path() const
-        {
-            return static_cast<std::filesystem::path>(base::relative_path());
-        }
-
-        // using base::remove_filename;
-        inline std::filesystem::path &remove_filename()
-        {
-            return static_cast<std::filesystem::path &>(base::remove_filename());
-        }
-
-        // using base::replace_extension;
-        inline std::filesystem::path &replace_extension(const path &replacement)
-        {
-            return static_cast<std::filesystem::path &>(base::replace_extension(replacement));
-        }
-
-        // using base::root_directory;
-        inline std::filesystem::path root_directory() const
-        {
-            return static_cast<std::filesystem::path>(base::root_directory());
-        }
-
-        // using base::root_name;
-        inline std::filesystem::path root_name() const
-        {
-            return static_cast<std::filesystem::path>(base::root_name());
-        }
-
-        // using base::root_path;
-        inline std::filesystem::path root_path() const
-        {
-            return static_cast<std::filesystem::path>(base::root_path());
-        }
-
-        // using base::stem;
-        inline std::filesystem::path stem() const
-        {
-            return static_cast<std::filesystem::path>(base::stem());
-        }
-
-        // using base::string;
-        // using base::u16string;
-        // using base::u32string;
-        // using base::u8string;
-        // using base::wstring;
-
-        // // Iterators
-        // using base::begin;
-        // using base::end;
-
-        // // Operators (these bring in template operator overloads too)
-        // using base::operator/=;
-        // using base::operator+=;
     };
 
     // ---- Type aliases ----
