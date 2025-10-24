@@ -128,19 +128,54 @@ bool test_filesystem()
     return true;
 }
 
-// Optional feature toggles (all OFF by default)
-//
-//   - STD_STRING_VIEW                              (C++17)
-//   - STD_U16STRING / STD_U32STRING                (C++11)
-//   - STD_U8STRING                                 (C++20)
-//   - STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH   (C++17)
-
 #ifdef STD_STRING_VIEW
 #    include <string_view>
 #endif
 
+namespace stdc
+{
+namespace tests
+{
+// char8_t is only a distinct type since C++20, but we can alias to unsigned char
+#if defined(__cpp_char8_t)
+    using u8string = std::u8string;
+
+    // Accept both char8_t* and char* sources
+    inline u8string make_u8(const char8_t *s)
+    {
+        return u8string(s);
+    }
+
+    inline u8string make_u8(const char *s)
+    {
+        // reinterpret the byte sequence as char8_t and copy with length
+        return u8string(reinterpret_cast<const char8_t *>(s), reinterpret_cast<const char8_t *>(s) + std::strlen(s));
+    }
+#else
+    using u8string = std::basic_string<unsigned char>;
+
+    inline u8string make_u8(const char *s)
+    {
+        return u8string(reinterpret_cast<const unsigned char *>(s), std::strlen(s));
+    }
+#endif
+
+#ifdef STD_STRING_VIEW
+    using string_view = std::string_view;
+#endif
+
+} // namespace tests
+} // namespace stdc
+
+// Optional feature toggles (all OFF by default unless defined externally)
+//
+//   - STD_STRING_VIEW                              (C++17)
+//   - STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH   (C++17)
+
 bool test_filesystem_path()
 {
+    using namespace stdc::tests;
+
     // ---- Constructors ----
     std::filesystem::path p1("dev/filesystem"); // const char*
 
@@ -148,27 +183,21 @@ bool test_filesystem_path()
     std::filesystem::path p2(s); // std::string
 
 #ifdef STD_STRING_VIEW
-    std::string_view sv = "dev/filesystem_sv";
+    string_view sv = "dev/filesystem_sv";
     std::filesystem::path p3(sv); // std::string_view
 #endif
 
     std::wstring ws = L"dev/filesystem_ws";
     std::filesystem::path p4(ws); // std::wstring
 
-#ifdef STD_U16STRING
     std::u16string u16s = u"dev/filesystem_u16";
     std::filesystem::path p5(u16s); // std::u16string
-#endif
 
-#ifdef STD_U32STRING
     std::u32string u32s = U"dev/filesystem_u32";
     std::filesystem::path p6(u32s); // std::u32string
-#endif
 
-#ifdef STD_U8STRING
-    std::u8string u8s = u8"dev/filesystem_u8";
-    std::filesystem::path p7(u8s); // std::u8string
-#endif
+    stdc::tests::u8string u8s = stdc::tests::make_u8("dev/filesystem_u8");
+    std::filesystem::path p7(u8s); // std::u8string (compat)
 
     const char *arr = "iterator_construct";
     std::filesystem::path p8(arr, arr + std::strlen(arr)); // iterator range
@@ -180,43 +209,27 @@ bool test_filesystem_path()
     std::filesystem::path pa;
     pa = "assign_from_cstr"; // const char*
     pa = s;                  // std::string
-
 #ifdef STD_STRING_VIEW
     pa = sv; // std::string_view
 #endif
-
     pa = ws; // std::wstring
-
-#ifdef STD_U16STRING
-    pa = u16s; // std::u16string
-#endif
-#ifdef STD_U32STRING
-    pa = u32s; // std::u32string
-#endif
-#ifdef STD_U8STRING
-    pa = u8s; // std::u8string
-#endif
+    pa = u16s;
+    pa = u32s;
+    pa = u8s;
 
     std::filesystem::path pb;
     pb = p1; // copy assignment
-
 #ifdef STD_STRING_VIEW
-    pb = std::move(p3); // move assignment (string_view-based path)
+    pb = std::move(p3); // move assignment
 #endif
 
     // ---- Use them to avoid unused warnings ----
     std::vector<std::filesystem::path> pathsList;
     pathsList.push_back(p1);
     pathsList.push_back(p4);
-#ifdef STD_U16STRING
     pathsList.push_back(p5);
-#endif
-#ifdef STD_U32STRING
     pathsList.push_back(p6);
-#endif
-#ifdef STD_U8STRING
     pathsList.push_back(p7);
-#endif
     pathsList.push_back(p8);
     pathsList.push_back(p9);
     pathsList.push_back(p10);
