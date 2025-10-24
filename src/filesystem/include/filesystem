@@ -14,8 +14,20 @@ namespace filesystem
         using base = ghc::filesystem::path;
 
     public:
-        using base::base; // inherit constructors
-        using base::operator=;
+        using base::base;      // inherit constructors
+        using base::operator=; // inherit assignment operators
+
+        path() : base::path()
+        {
+        }
+
+        // implicit conversion from base
+        path(const base &other) : base(other)
+        {
+        }
+        path(base &&other) noexcept : base(std::move(other))
+        {
+        }
     };
 
     // ---- Type aliases ----

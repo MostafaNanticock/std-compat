@@ -2,6 +2,10 @@
 
 #include <filesystem>
 
+#if __cplusplus >= 201703L
+#    include <string_view>
+#endif
+
 // Optional feature toggles (for c++17 [Off by default]):
 //   - STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH
 
@@ -124,9 +128,155 @@ bool test_filesystem()
     return true;
 }
 
+#ifdef STD_STRING_VIEW
+#    include <string_view>
+#endif
+
+namespace stdc
+{
+namespace tests
+{
+// char8_t is only a distinct type since C++20, but we can alias to unsigned char
+#if defined(__cpp_char8_t)
+    using u8string = std::u8string;
+
+    // Accept both char8_t* and char* sources
+    inline u8string make_u8(const char8_t *s)
+    {
+        return u8string(s);
+    }
+
+    inline u8string make_u8(const char *s)
+    {
+        // reinterpret the byte sequence as char8_t and copy with length
+        return u8string(reinterpret_cast<const char8_t *>(s), reinterpret_cast<const char8_t *>(s) + std::strlen(s));
+    }
+#else
+    using u8string = std::basic_string<unsigned char>;
+
+    inline u8string make_u8(const char *s)
+    {
+        return u8string(reinterpret_cast<const unsigned char *>(s), std::strlen(s));
+    }
+#endif
+
+#ifdef STD_STRING_VIEW
+    using string_view = std::string_view;
+#endif
+
+} // namespace tests
+} // namespace stdc
+
+// Optional feature toggles (all OFF by default unless defined externally)
+//
+//   - STD_STRING_VIEW                              (C++17)
+//   - STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH   (C++17)
+
+bool test_filesystem_path()
+{
+    using namespace stdc::tests;
+
+    // ---- Constructors ----
+    std::filesystem::path p1("dev/filesystem"); // const char*
+
+    std::string s = "dev/filesystem_str";
+    std::filesystem::path p2(s); // std::string
+
+#ifdef STD_STRING_VIEW
+    string_view sv = "dev/filesystem_sv";
+    std::filesystem::path p3(sv); // std::string_view
+#endif
+
+    std::wstring ws = L"dev/filesystem_ws";
+    std::filesystem::path p4(ws); // std::wstring
+
+    std::u16string u16s = u"dev/filesystem_u16";
+    std::filesystem::path p5(u16s); // std::u16string
+
+    std::u32string u32s = U"dev/filesystem_u32";
+    std::filesystem::path p6(u32s); // std::u32string
+
+    stdc::tests::u8string u8s = stdc::tests::make_u8("dev/filesystem_u8");
+    std::filesystem::path p7(u8s); // std::u8string (compat)
+
+    const char *arr = "iterator_construct";
+    std::filesystem::path p8(arr, arr + std::strlen(arr)); // iterator range
+
+    std::filesystem::path p9(p1);             // copy constructor
+    std::filesystem::path p10(std::move(p2)); // move constructor
+
+    // ---- Assignment operators ----
+    std::filesystem::path pa;
+    pa = "assign_from_cstr"; // const char*
+    pa = s;                  // std::string
+#ifdef STD_STRING_VIEW
+    pa = sv; // std::string_view
+#endif
+    pa = ws; // std::wstring
+    pa = u16s;
+    pa = u32s;
+    pa = u8s;
+
+    std::filesystem::path pb;
+    pb = p1; // copy assignment
+#ifdef STD_STRING_VIEW
+    pb = std::move(p3); // move assignment
+#endif
+
+    // ---- Use them to avoid unused warnings ----
+    std::vector<std::filesystem::path> pathsList;
+    pathsList.push_back(p1);
+    pathsList.push_back(p4);
+    pathsList.push_back(p5);
+    pathsList.push_back(p6);
+    pathsList.push_back(p7);
+    pathsList.push_back(p8);
+    pathsList.push_back(p9);
+    pathsList.push_back(p10);
+    pathsList.push_back(pa);
+    pathsList.push_back(pb);
+
+    // ---- Additional operations ----
+    std::filesystem::path p11 = "dev/filesystem";
+    pathsList.push_back("dev/filesystem");
+
+    std::filesystem::path p12;
+    p12 = "dev";
+    pathsList.push_back(p12.concat(".dll"));
+
+    const char *suffix = "/subdir";
+    pathsList.push_back(std::filesystem::path("dev").append(suffix, suffix + 7));
+
+    pathsList.push_back(std::filesystem::path("file.txt").extension());
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").filename());
+    pathsList.push_back(std::filesystem::path("a/./b/../c").lexically_normal());
+    pathsList.push_back(std::filesystem::path("/usr/bin").lexically_proximate("/usr"));
+    pathsList.push_back(std::filesystem::path("/usr/bin").lexically_relative("/usr"));
+
+    std::filesystem::path p13 = "dev/filesystem";
+    pathsList.push_back(p13.make_preferred());
+
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").parent_path());
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").relative_path());
+
+    std::filesystem::path p14 = "/usr/bin/tool";
+    pathsList.push_back(p14.remove_filename());
+
+    std::filesystem::path p15 = "file.old";
+    pathsList.push_back(p15.replace_extension(".new"));
+
+    pathsList.push_back(std::filesystem::path("/usr/bin").root_directory());
+    pathsList.push_back(std::filesystem::path("C:\\Windows").root_name());
+    pathsList.push_back(std::filesystem::path("C:\\Windows").root_path());
+    pathsList.push_back(std::filesystem::path("file.txt").stem());
+
+    return true;
+}
+
 int main()
 {
     PM_PRINT_COMPILE_INFO;
 
     PM_EXECUTE_TEST(test_filesystem);
+    PM_EXECUTE_TEST(test_filesystem_path);
 }
