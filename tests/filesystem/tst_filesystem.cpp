@@ -121,6 +121,10 @@ bool test_filesystem()
         return false;
     }
 
+    std::vector<std::filesystem::path> pathsList;
+    pathsList.push_back("dev/filesystem");
+    pathsList.push_back(std::filesystem::path("dev").concat(".dll"));
+
     return true;
 }
 

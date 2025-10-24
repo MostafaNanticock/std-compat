@@ -14,8 +14,64 @@ namespace filesystem
         using base = ghc::filesystem::path;
 
     public:
-        using base::base; // inherit constructors
-        using base::operator=;
+        using base::base;      // inherit constructors
+        using base::operator=; // inherit assignment operators
+
+        // using base::append;
+        template <class InputIterator>
+        inline std::filesystem::path &append(InputIterator first, InputIterator last)
+        {
+            return base::append(first, last);
+        }
+
+        // using base::compare;
+        // using base::concat;
+        template <class Source>
+        inline std::filesystem::path &concat(const Source &x)
+        {
+            return static_cast<std::filesystem::path &>(base::concat(x));
+        }
+        template <class InputIterator>
+        inline std::filesystem::path &concat(InputIterator first, InputIterator last)
+        {
+            return base::concat(first, last);
+        }
+
+        // using base::empty;
+        // using base::extension;
+        // using base::filename;
+        // using base::generic_string;
+        // using base::has_extension;
+        // using base::has_filename;
+        // using base::has_parent_path;
+        // using base::has_relative_path;
+        // using base::is_absolute;
+        // using base::is_relative;
+        // using base::lexically_normal;
+        // using base::lexically_proximate;
+        // using base::lexically_relative;
+        // using base::make_preferred;
+        // using base::parent_path;
+        // using base::relative_path;
+        // using base::remove_filename;
+        // using base::replace_extension;
+        // using base::root_directory;
+        // using base::root_name;
+        // using base::root_path;
+        // using base::stem;
+        // using base::string;
+        // using base::u16string;
+        // using base::u32string;
+        // using base::u8string;
+        // using base::wstring;
+
+        // // Iterators
+        // using base::begin;
+        // using base::end;
+
+        // // Operators (these bring in template operator overloads too)
+        // using base::operator/=;
+        // using base::operator+=;
     };
 
     // ---- Type aliases ----
