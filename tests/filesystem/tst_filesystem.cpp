@@ -121,9 +121,64 @@ bool test_filesystem()
         return false;
     }
 
+    std::filesystem::path p1 = "dev/filesystem";
+
     std::vector<std::filesystem::path> pathsList;
     pathsList.push_back("dev/filesystem");
-    pathsList.push_back(std::filesystem::path("dev").concat(".dll"));
+
+    // operator= and concat
+    std::filesystem::path p2;
+    p2 = "dev";
+    pathsList.push_back(p2.concat(".dll"));
+
+    // append
+    const char *suffix = "/subdir";
+    pathsList.push_back(std::filesystem::path("dev").append(suffix, suffix + 7));
+
+    // extension
+    pathsList.push_back(std::filesystem::path("file.txt").extension());
+
+    // filename
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").filename());
+
+    // lexically_normal
+    pathsList.push_back(std::filesystem::path("a/./b/../c").lexically_normal());
+
+    // lexically_proximate
+    pathsList.push_back(std::filesystem::path("/usr/bin").lexically_proximate("/usr"));
+
+    // lexically_relative
+    pathsList.push_back(std::filesystem::path("/usr/bin").lexically_relative("/usr"));
+
+    // make_preferred
+    std::filesystem::path p3 = "dev/filesystem";
+    pathsList.push_back(p3.make_preferred());
+
+    // parent_path
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").parent_path());
+
+    // relative_path
+    pathsList.push_back(std::filesystem::path("/usr/bin/tool").relative_path());
+
+    // remove_filename
+    std::filesystem::path p4 = "/usr/bin/tool";
+    pathsList.push_back(p4.remove_filename());
+
+    // replace_extension
+    std::filesystem::path p5 = "file.old";
+    pathsList.push_back(p5.replace_extension(".new"));
+
+    // root_directory
+    pathsList.push_back(std::filesystem::path("/usr/bin").root_directory());
+
+    // root_name
+    pathsList.push_back(std::filesystem::path("C:\\Windows").root_name());
+
+    // root_path
+    pathsList.push_back(std::filesystem::path("C:\\Windows").root_path());
+
+    // stem
+    pathsList.push_back(std::filesystem::path("file.txt").stem());
 
     return true;
 }
