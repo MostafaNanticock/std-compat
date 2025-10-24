@@ -9,12 +9,12 @@ include(StdCompatAPI)
 
 # Create a header-only interface library
 add_library(StdCompat INTERFACE)
+add_subdirectory(src)
 
 option(STDC_BUILD_TOOLS "Build the std-compat tools" ON)
 
 if(STDC_BUILD_TOOLS)
     add_subdirectory(tools)
-    add_subdirectory(src)
 endif()
 
 option(STDC_BUILD_TESTS "Build the std-compat tests" ON)

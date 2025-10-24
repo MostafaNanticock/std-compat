@@ -70,6 +70,9 @@ function(stdc_add_module TARGET_NAME)
                 ${_arg_COMPILE_DEFINITIONS}
         )
     endif()
+
+    # Add to the StdCompat package
+    target_link_libraries(StdCompat INTERFACE ${TARGET_NAME})
 endfunction()
 
 # Usage:
