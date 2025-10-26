@@ -2,10 +2,12 @@
 
 #if defined(_MSC_VER)
 #    include "compiler_msvc.h"
-#elif defined(__clang__)
-#    include "compiler_clang.h"
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && !defined(__clang__)
+// Real GCC (clang also defines __GNUC__, so exclude it here)
 #    include "compiler_gcc.h"
+#elif defined(__clang__)
+// Clang (including clang-cl, clangd, etc.)
+#    include "compiler_clang.h"
 #else
 #    define PM_COMPILER_IS_MSVC 0
 #    define PM_COMPILER_IS_CLANG 0

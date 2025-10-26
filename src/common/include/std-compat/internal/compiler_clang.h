@@ -1,26 +1,25 @@
 #pragma once
 
 #ifndef PM_COMPILER_VERSION_MAJOR
-#define PM_COMPILER_VERSION_MAJOR __clang_major__
+#    define PM_COMPILER_VERSION_MAJOR __clang_major__
 #endif
 
 #ifndef PM_COMPILER_VERSION_MINOR
-#define PM_COMPILER_VERSION_MINOR __clang_minor__
+#    define PM_COMPILER_VERSION_MINOR __clang_minor__
 #endif
 
 #ifndef PM_COMPILER_VERSION_BUILD
-#define PM_COMPILER_VERSION_BUILD __clang_patchlevel__
+#    define PM_COMPILER_VERSION_BUILD __clang_patchlevel__
 #endif
 
 #ifndef PM_COMPILER_VERSION_REVISION
-#define PM_COMPILER_VERSION_REVISION 0
+#    define PM_COMPILER_VERSION_REVISION 0
 #endif
 
 #ifndef PM_COMPILER_NAME
-#define PM_COMPILER_NAME "Clang"
+#    define PM_COMPILER_NAME "Clang"
 #endif
 
 #ifndef PM_CC_CLANG
-#define PM_CC_CLANG \
-    ((PM_COMPILER_VERSION_MAJOR * 10000) + (PM_COMPILER_VERSION_MINOR * 100) + PM_COMPILER_VERSION_BUILD)
+#    define PM_CC_CLANG ((PM_COMPILER_VERSION_MAJOR * 10000) + (PM_COMPILER_VERSION_MINOR * 100) + PM_COMPILER_VERSION_BUILD)
 #endif
