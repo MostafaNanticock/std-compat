@@ -8,22 +8,19 @@
 bool test_iteration_single_file_and_nested_dir()
 {
     std::error_code ec;
+    FileSystemTestCase testCase("test_dir");
 
-    // Setup: clean and recreate test_dir structure
-    std::filesystem::remove_all("test_dir", ec);
-    std::filesystem::create_directories("test_dir/subdir/nested", ec);
+    const std::filesystem::path root = testCase.path();
+    const std::filesystem::path nestedDir = root / "subdir/nested";
+    const std::filesystem::path filePath = root / "file_renamed.txt";
 
-    // Create a file to find
-    std::filesystem::path filePath = "test_dir/file_renamed.txt";
+    std::filesystem::create_directories(nestedDir, ec);
+
     std::ofstream ofs(filePath);
-
     if (!ofs)
         return false;
-
     ofs << "test content\n";
     ofs.close();
-
-    std::filesystem::path root = "test_dir";
 
     if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec))
         return false;
@@ -32,11 +29,11 @@ bool test_iteration_single_file_and_nested_dir()
     bool foundFile = false;
     for (const std::filesystem::directory_entry &entry : std::filesystem::directory_iterator(root, ec))
     {
-        if (entry.path().filename() != "file_renamed.txt")
-            continue;
-
-        foundFile = true;
-        break;
+        if (entry.path().filename() == "file_renamed.txt")
+        {
+            foundFile = true;
+            break;
+        }
     }
 
     if (!foundFile)
@@ -46,14 +43,12 @@ bool test_iteration_single_file_and_nested_dir()
     bool foundNested = false;
     for (const std::filesystem::directory_entry &entry : std::filesystem::recursive_directory_iterator(root, ec))
     {
-        if (entry.path().filename() != "nested")
-            continue;
-
-        foundNested = true;
-        break;
+        if (entry.path().filename() == "nested")
+        {
+            foundNested = true;
+            break;
+        }
     }
-
-    cleanUpTestCase(root);
 
     return foundNested;
 }
@@ -61,17 +56,19 @@ bool test_iteration_single_file_and_nested_dir()
 bool test_iteration_multiple_files_and_dirs()
 {
     std::error_code ec;
+    FileSystemTestCase testCase("test_dir_multi");
 
-    // Setup: clean and recreate test_dir_multi structure
-    std::filesystem::remove_all("test_dir_multi", ec);
-    std::filesystem::create_directories("test_dir_multi/dirA", ec);
-    std::filesystem::create_directories("test_dir_multi/dirB", ec);
+    const std::filesystem::path root = testCase.path();
+    const std::filesystem::path dirA = root / "dirA";
+    const std::filesystem::path dirB = root / "dirB";
 
-    // Create multiple files
-    std::ofstream f1("test_dir_multi/file1.txt");
-    std::ofstream f2("test_dir_multi/file2.txt");
-    std::ofstream f3("test_dir_multi/dirA/file3.txt");
-    std::ofstream f4("test_dir_multi/dirB/file4.txt");
+    std::filesystem::create_directories(dirA, ec);
+    std::filesystem::create_directories(dirB, ec);
+
+    std::ofstream f1(root / "file1.txt");
+    std::ofstream f2(root / "file2.txt");
+    std::ofstream f3(dirA / "file3.txt");
+    std::ofstream f4(dirB / "file4.txt");
 
     if (!f1 || !f2 || !f3 || !f4)
         return false;
@@ -85,8 +82,6 @@ bool test_iteration_multiple_files_and_dirs()
     f3.close();
     f4.close();
 
-    std::filesystem::path root = "test_dir_multi";
-
     if (!std::filesystem::exists(root, ec) || !std::filesystem::is_directory(root, ec))
         return false;
 
@@ -97,14 +92,10 @@ bool test_iteration_multiple_files_and_dirs()
     {
         if (entry.is_regular_file(ec))
             ++fileCount;
-
         else if (entry.is_directory(ec))
             ++dirCount;
     }
 
-    cleanUpTestCase(root);
-
-    // Expecting 4 files and at least 2 subdirectories
     return fileCount == 4 && dirCount >= 2;
 }
 
