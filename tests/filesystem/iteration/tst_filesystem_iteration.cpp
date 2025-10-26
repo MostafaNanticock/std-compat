@@ -1,13 +1,9 @@
 #include <testing.h>
 
+#include <fs_tests_common/test_utils.h>
+
 #include <filesystem>
 #include <fstream>
-
-void cleanUpTestCase(const std::filesystem::path &root)
-{
-    std::error_code ec;
-    std::filesystem::remove_all(root, ec);
-}
 
 bool test_iteration_single_file_and_nested_dir()
 {

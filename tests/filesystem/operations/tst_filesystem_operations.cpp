@@ -1,5 +1,7 @@
 #include <testing.h>
 
+#include <fs_tests_common/test_utils.h>
+
 #include <filesystem>
 #include <fstream>
 
@@ -9,39 +11,76 @@
 
 bool test_operations()
 {
-    std::filesystem::remove_all("test_dir");
+    std::error_code ec;
+    const std::filesystem::path root = "test_dir";
+    const std::filesystem::path p1 = root;
+    const std::filesystem::path p2 = root / "file.txt";
+    const std::filesystem::path copyPath = root / "file_copy.txt";
+    const std::filesystem::path renamedPath = root / "file_renamed.txt";
 
-    std::filesystem::path p1{"test_dir"};
-    std::filesystem::path p2{"test_dir/file.txt"};
+    // Clean up before starting
+    std::filesystem::remove_all(root, ec);
 
-    if (!std::filesystem::create_directory(p1) || !std::filesystem::exists(p1))
-        return false;
-    if (!std::filesystem::create_directories("test_dir/subdir/nested"))
-        return false;
+    bool success = true;
+
+    do
+    {
+        if (!std::filesystem::create_directory(p1, ec) || !std::filesystem::exists(p1, ec))
+        {
+            success = false;
+            break;
+        }
+
+        if (!std::filesystem::create_directories(root / "subdir/nested", ec))
+        {
+            success = false;
+            break;
+        }
 
 #ifdef STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH
-    std::ofstream ofs(p2);
+        std::ofstream ofs(p2);
 #else
-    std::ofstream ofs(p2.string());
+        std::ofstream ofs(p2.string());
 #endif
-    if (!ofs)
-        return false;
-    ofs << "Hello filesystem\n";
+        if (!ofs)
+        {
+            success = false;
+            break;
+        }
+        ofs << "Hello filesystem\n";
+        ofs.close();
 
-    if (std::filesystem::file_size(p2) == 0)
-        return false;
-    if (!std::filesystem::copy_file(p2, "test_dir/file_copy.txt", std::filesystem::copy_options::overwrite_existing))
-        return false;
+        if (std::filesystem::file_size(p2, ec) == 0)
+        {
+            success = false;
+            break;
+        }
 
-    std::filesystem::rename("test_dir/file_copy.txt", "test_dir/file_renamed.txt");
-    if (!std::filesystem::exists("test_dir/file_renamed.txt"))
-        return false;
+        if (!std::filesystem::copy_file(p2, copyPath, std::filesystem::copy_options::overwrite_existing, ec))
+        {
+            success = false;
+            break;
+        }
 
-    std::filesystem::resize_file(p2, 5);
-    if (std::filesystem::file_size(p2) != 5)
-        return false;
+        std::filesystem::rename(copyPath, renamedPath, ec);
+        if (!std::filesystem::exists(renamedPath, ec))
+        {
+            success = false;
+            break;
+        }
 
-    return true;
+        std::filesystem::resize_file(p2, 5, ec);
+        if (std::filesystem::file_size(p2, ec) != 5)
+        {
+            success = false;
+            break;
+        }
+
+    } while (false);
+
+    cleanUpTestCase(root);
+
+    return success;
 }
 
 int main()
