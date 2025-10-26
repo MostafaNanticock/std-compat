@@ -16,7 +16,7 @@ bool test_iteration_single_file_and_nested_dir()
 
     std::filesystem::create_directories(nestedDir, ec);
 
-    std::ofstream ofs = STDC::Testing::open_stream_from_path<std::ofstream>(filePath);
+    std::ofstream ofs = STDC::Testing::open_stream_from_path<std::ofstream>(filePath, std::ios::out);
     if (!ofs)
         return false;
     ofs << "test content\n";
@@ -65,10 +65,10 @@ bool test_iteration_multiple_files_and_dirs()
     std::filesystem::create_directories(dirA, ec);
     std::filesystem::create_directories(dirB, ec);
 
-    std::ofstream f1 = STDC::Testing::open_stream_from_path<std::ofstream>(root / "file1.txt");
-    std::ofstream f2 = STDC::Testing::open_stream_from_path<std::ofstream>(root / "file2.txt");
-    std::ofstream f3 = STDC::Testing::open_stream_from_path<std::ofstream>(dirA / "file3.txt");
-    std::ofstream f4 = STDC::Testing::open_stream_from_path<std::ofstream>(dirB / "file4.txt");
+    std::ofstream f1 = STDC::Testing::open_stream_from_path<std::ofstream>(root / "file1.txt", std::ios::out);
+    std::ofstream f2 = STDC::Testing::open_stream_from_path<std::ofstream>(root / "file2.txt", std::ios::out);
+    std::ofstream f3 = STDC::Testing::open_stream_from_path<std::ofstream>(dirA / "file3.txt", std::ios::out);
+    std::ofstream f4 = STDC::Testing::open_stream_from_path<std::ofstream>(dirB / "file4.txt", std::ios::out);
 
     auto r = root.c_str();
 
