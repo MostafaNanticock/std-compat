@@ -1,6 +1,7 @@
 #include <testing.h>
 
 #include <filesystem>
+#include <sstream>
 
 #if __cplusplus >= 201703L
 #    include <string_view>
@@ -223,6 +224,39 @@ bool test_filesystem_path()
     pb = std::move(p3); // move assignment
 #endif
 
+    // ---- Shim-specific tests ----
+    std::filesystem::path shim1 = std::filesystem::path("shim/from_base_copy");
+    std::filesystem::path shim2 = std::filesystem::path(std::filesystem::path("shim/from_base_move"));
+
+    std::filesystem::path shim3;                   // default constructor
+    std::filesystem::path shim4(shim1);            // copy constructor
+    std::filesystem::path shim5(std::move(shim2)); // move constructor
+
+    std::filesystem::path shim6;
+    shim6 = shim4; // copy assignment
+    std::filesystem::path shim7;
+    shim7 = std::move(shim5); // move assignment
+
+    // ---- Comparison operators ----
+    bool eq = (p1 == p9);
+    bool neq = (p1 != p4);
+    bool lt = (p4 < p5);
+    bool le = (p4 <= p5);
+    bool gt = (p5 > p4);
+    bool ge = (p5 >= p4);
+
+    // ---- Concatenation and append operators ----
+    std::filesystem::path concat1 = p1 / "subdir";
+    std::filesystem::path concat2 = p4;
+    concat2 /= "subdir";
+
+    std::filesystem::path append1 = p5;
+    append1 += ".dll";
+
+    // ---- Stream insertion ----
+    std::ostringstream oss;
+    oss << p1 << " | " << p4 << " | " << concat1;
+
     // ---- Use them to avoid unused warnings ----
     std::vector<std::filesystem::path> pathsList;
     pathsList.push_back(p1);
@@ -235,6 +269,15 @@ bool test_filesystem_path()
     pathsList.push_back(p10);
     pathsList.push_back(pa);
     pathsList.push_back(pb);
+    pathsList.push_back(shim1);
+    pathsList.push_back(shim3);
+    pathsList.push_back(shim4);
+    pathsList.push_back(shim5);
+    pathsList.push_back(shim6);
+    pathsList.push_back(shim7);
+    pathsList.push_back(concat1);
+    pathsList.push_back(concat2);
+    pathsList.push_back(append1);
 
     // ---- Additional operations ----
     std::filesystem::path p11 = "dev/filesystem";
@@ -270,7 +313,7 @@ bool test_filesystem_path()
     pathsList.push_back(std::filesystem::path("C:\\Windows").root_path());
     pathsList.push_back(std::filesystem::path("file.txt").stem());
 
-    return true;
+    return eq && !neq && lt && le && gt && ge;
 }
 
 int main()

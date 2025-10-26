@@ -17,11 +17,16 @@ namespace filesystem
         using base::base;      // inherit constructors
         using base::operator=; // inherit assignment operators
 
+        path(const path &other) = default;
+        path(path &&other) noexcept = default;
+        path &operator=(const path &other) = default;
+        path &operator=(path &&other) noexcept = default;
+
         path() : base::path()
         {
         }
 
-        // implicit conversion from base
+        // Implicit conversion from base
         path(const base &other) : base(other)
         {
         }
