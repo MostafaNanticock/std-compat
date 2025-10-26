@@ -4,9 +4,31 @@
 
 bool test_iteration()
 {
-    // FIXME: not implemented yet
+    std::filesystem::path p1{"test_dir"};
 
-    return true;
+    bool found = false;
+    for (auto &entry : std::filesystem::directory_iterator(p1))
+    {
+        if (entry.path().filename() == "file_renamed.txt")
+        {
+            found = true;
+            break;
+        }
+    }
+    if (!found)
+        return false;
+
+    bool foundNested = false;
+    for (auto &entry : std::filesystem::recursive_directory_iterator(p1))
+    {
+        if (entry.path().filename() == "nested")
+        {
+            foundNested = true;
+            break;
+        }
+    }
+
+    return foundNested;
 }
 
 int main()
