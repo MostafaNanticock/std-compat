@@ -7,10 +7,10 @@
 
 bool test_status()
 {
-    FileSystemTestCase testCase("test_dir");
+    STDC::Testing::FileSystemTestCase testCase("test_dir");
     std::filesystem::path filePath = testCase.path() / "file.txt";
 
-    std::ofstream ofs(filePath);
+    std::ofstream ofs = STDC::Testing::open_stream_from_path<std::ofstream>(filePath);
     if (!ofs)
         return false;
     ofs << "status test\n";

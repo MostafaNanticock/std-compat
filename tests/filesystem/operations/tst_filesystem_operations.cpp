@@ -12,7 +12,7 @@
 bool test_operations()
 {
     std::error_code ec;
-    FileSystemTestCase testCase("test_dir");
+    STDC::Testing::FileSystemTestCase testCase("test_dir");
 
     const std::filesystem::path root = testCase.path();
     const std::filesystem::path filePath = root / "file.txt";
