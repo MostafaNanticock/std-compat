@@ -3,9 +3,50 @@
 #include <filesystem>
 #include <sstream>
 
-#if __cplusplus >= 201703L
+#ifndef STD_STRING_VIEW
+#    if __cplusplus >= 201703L
+#        define STD_STRING_VIEW 1
+#    endif
+#endif
+
+#ifdef STD_STRING_VIEW
 #    include <string_view>
 #endif
+
+namespace stdc
+{
+namespace tests
+{
+// char8_t is only a distinct type since C++20, but we can alias to unsigned char
+#if defined(__cpp_char8_t)
+    using u8string = std::u8string;
+
+    // Accept both char8_t* and char* sources
+    inline u8string make_u8(const char8_t *s)
+    {
+        return u8string(s);
+    }
+
+    inline u8string make_u8(const char *s)
+    {
+        // reinterpret the byte sequence as char8_t and copy with length
+        return u8string(reinterpret_cast<const char8_t *>(s), reinterpret_cast<const char8_t *>(s) + std::strlen(s));
+    }
+#else
+    using u8string = std::basic_string<unsigned char>;
+
+    inline u8string make_u8(const char *s)
+    {
+        return u8string(reinterpret_cast<const unsigned char *>(s), std::strlen(s));
+    }
+#endif
+
+#ifdef STD_STRING_VIEW
+    using string_view = std::string_view;
+#endif
+
+} // namespace tests
+} // namespace stdc
 
 // Optional feature toggles (for c++17 [Off by default]):
 //   - STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH
@@ -112,6 +153,38 @@ bool test_filesystem()
         if (std::filesystem::file_size(p2) != 5)
             return false;
 
+        // ---- u8path overload tests using cross-version u8string ----
+        stdc::tests::u8string u8str1 = stdc::tests::make_u8("test_dir/u8_cstr.txt");
+        std::filesystem::path u8p1 = std::filesystem::u8path(u8str1);
+
+        stdc::tests::u8string u8str2 = stdc::tests::make_u8("test_dir/u8_string.txt");
+        std::filesystem::path u8p2 = std::filesystem::u8path(u8str2);
+
+        std::filesystem::path u8p3 = std::filesystem::u8path(stdc::tests::make_u8("test_dir/u8_rvalue.txt"));
+
+#ifdef STD_STRING_VIEW
+        std::string_view sv = "test_dir/u8_view.txt";
+        std::filesystem::path u8p4 = std::filesystem::u8path(sv);
+#endif
+
+        const char *begin = "test_dir/u8_range.txt";
+        const char *end = begin + std::strlen(begin);
+        std::filesystem::path u8p5 = std::filesystem::u8path(begin, end);
+
+        {
+#ifdef STD_CONSTRUCT_FSTREAM_FROM_FILESYSTEM_PATH
+            std::ofstream ofs(u8p1);
+#else
+            std::ofstream ofs(u8p1.string());
+#endif
+            if (!ofs)
+                return false;
+            ofs << "u8path test\n";
+        }
+
+        if (!std::filesystem::exists(u8p1))
+            return false;
+
         std::filesystem::remove("test_dir/file_renamed.txt");
         std::filesystem::remove_all("test_dir");
     }
@@ -128,45 +201,6 @@ bool test_filesystem()
 
     return true;
 }
-
-#ifdef STD_STRING_VIEW
-#    include <string_view>
-#endif
-
-namespace stdc
-{
-namespace tests
-{
-// char8_t is only a distinct type since C++20, but we can alias to unsigned char
-#if defined(__cpp_char8_t)
-    using u8string = std::u8string;
-
-    // Accept both char8_t* and char* sources
-    inline u8string make_u8(const char8_t *s)
-    {
-        return u8string(s);
-    }
-
-    inline u8string make_u8(const char *s)
-    {
-        // reinterpret the byte sequence as char8_t and copy with length
-        return u8string(reinterpret_cast<const char8_t *>(s), reinterpret_cast<const char8_t *>(s) + std::strlen(s));
-    }
-#else
-    using u8string = std::basic_string<unsigned char>;
-
-    inline u8string make_u8(const char *s)
-    {
-        return u8string(reinterpret_cast<const unsigned char *>(s), std::strlen(s));
-    }
-#endif
-
-#ifdef STD_STRING_VIEW
-    using string_view = std::string_view;
-#endif
-
-} // namespace tests
-} // namespace stdc
 
 // Optional feature toggles (all OFF by default unless defined externally)
 //

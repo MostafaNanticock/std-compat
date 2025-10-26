@@ -80,6 +80,7 @@ namespace filesystem
     using ghc::filesystem::status;
     using ghc::filesystem::symlink_status;
     using ghc::filesystem::temp_directory_path;
+    using ghc::filesystem::u8path;
     using ghc::filesystem::weakly_canonical;
 
     // ---- File type predicates ----
