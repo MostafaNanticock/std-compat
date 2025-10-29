@@ -49,10 +49,12 @@ namespace internal
             return "C++20";
         case 202302L:
             return "C++23";
-        // Future-proofing: add more as needed
         default:
-            return "Unknown / non-standard C++ version";
+            break;
         }
+
+        static std::string unknownVersion = "Unknown / non-standard C++ version: " + std::to_string(PM_CPP_VERSION) + "L";
+        return unknownVersion.c_str();
     }
 } // namespace internal
 } // namespace PM

@@ -3,12 +3,14 @@
 #include <fs_tests_common/u8string.h>
 
 #include <filesystem>
+#include <map>
 #include <sstream>
+#include <unordered_map>
 
 // Optional feature toggles (all OFF by default unless defined externally)
 //
 //   - STD_STRING_VIEW                              (C++17)
-
+//
 bool test_filesystem_path()
 {
     using namespace stdc::tests;
@@ -112,6 +114,20 @@ bool test_filesystem_path()
     if (std::filesystem::path("/usr/bin").root_directory() != "/")
         return false;
 #endif
+
+    // Ordered map (uses operator<)
+    std::map<std::filesystem::path, int> ordered;
+    ordered[p1] = 1;
+    ordered[concat1] = 2;
+    if (ordered[p1] != 1 || ordered[concat1] != 2)
+        return false;
+
+    // Unordered map (uses std::hash)
+    std::unordered_map<std::filesystem::path, int> unordered;
+    unordered[p1] = 10;
+    unordered[concat1] = 20;
+    if (unordered[p1] != 10 || unordered[concat1] != 20)
+        return false;
 
     return true;
 }

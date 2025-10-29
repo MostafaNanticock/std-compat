@@ -95,6 +95,15 @@ namespace filesystem
     using ghc::filesystem::is_symlink;
     using ghc::filesystem::status_known;
 } // namespace filesystem
+
+template <>
+struct hash<std::filesystem::path>
+{
+    std::size_t operator()(const std::filesystem::path &path) const noexcept
+    {
+        return ghc::filesystem::hash_value(path);
+    }
+};
 } // namespace std
 
 #endif
